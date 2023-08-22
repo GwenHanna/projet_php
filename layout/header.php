@@ -28,6 +28,7 @@ if (isset($_SESSION['user'])) {
             <?php
             if (empty($_SESSION['user'])) { ?>
                 <a href="connexion.php">Connection</a>
+                <a href="singnin.php">Inscription</a>
             <?php } else { ?>
                 <a href="logout.php">Deconection</a>
             <?php }
