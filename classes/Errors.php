@@ -9,6 +9,7 @@ class Errors
     public const ERR_ALREADY_EMAIL = 5;
     public const ERR_VALIDATE_PASS = 6;
     public const ERR_CONFIRMED_PASS = 7;
+    public const ERR_FORMAT_PICTURE = 8;
 
     /**
      * Error function
@@ -40,6 +41,9 @@ class Errors
                 break;
             case 7:
                 $res = "Ce mot de passe doit être identique";
+                break;
+            case 8:
+                $res = "Le format accepter sont '.jpg', '.jpeg', 'png'";
                 break;
             default:
                 $res = 'Autre Erreur';

@@ -29,8 +29,9 @@ class Email
             throw new EmailValidationException(Errors::getCodes(Errors::ERR_VALIDATION_EMAIL));
         } elseif ($this->isSpam($email) === true) {
             throw new EmailSpamExeption(Errors::getCodes(Errors::ERR_SPAM_EMAIL));
+        } else {
+            $this->email = $email;
         }
-        var_dump($this->getEmailBDD());
     }
 
     public function isEmailBDD(string $email): bool
@@ -68,5 +69,10 @@ class Email
     {
         $domain = explode('@', $email);
         return in_array($domain[1], Config::SPAM_DOMAIN);
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
     }
 }

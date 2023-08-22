@@ -1,19 +1,25 @@
 <?php
-
 require_once './layout/header.php';
 require_once './classes/Email.php';
 require_once './classes/Errors.php';
 require_once './classes/Utils.php';
 require_once './classes/Password.php';
 require_once './classes/Uploadfile.php';
+require_once './classes/Db.php';
+require_once './classes/User.php';
 
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
 }
 
+//Verification des erreur URL
+if ((isset($_GET['error']))) {
+    $errorMessageFormatPicture =  Errors::getCodes($_GET['error']);
+}
+
+$_SESSION['pagination-form-sign-in'] = 1;
 
 if (isset($_POST['submit-register'])) {
-    $_SESSION['pagination-form-sign-in'] = 1;
     try {
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
@@ -37,9 +43,6 @@ if (isset($_POST['submit-register'])) {
             $valuePass = $_POST['password'];
         } else {
             $_SESSION['pagination-form-sign-in'] = 2;
-            if (isset($_FILES['fileName'])) {
-                var_dump($_FILES);
-            }
         }
     } catch (EmailValidationException $e) {
         $errorMessageEmail = $e->getMessage();
@@ -49,18 +52,20 @@ if (isset($_POST['submit-register'])) {
         $errorMessagePassword = $p->getMessage();
     }
 
-    // if (isset($_POST['register_submit_two'])) {
-    //     $picture = new Uploadfile($_FILES['fileName']);
-    //     echo $picture;
-    // }
+    $db = new Db();
+    $u = new User($db);
+    $u->InsertCoordannat($_POST['firstname'], $_POST['lastname'], $newEmail->getEmail(), $newPassword->getPasswordHash());
+
+    var_dump($newPassword->getPasswordHash());
+    var_dump(password_verify('sdfJHJK54153:', $newPassword->getPasswordHash()));
+    var_dump($u->InsertCoordannat($_POST['firstname'], $_POST['lastname'], $newEmail->getEmail(), $newPassword->getPasswordHash()));
 }
 
 ?>
 
-<?php if ($_SESSION['pagination-form-sign-in'] == 1) { ?>
+<?php if ($_SESSION['pagination-form-sign-in'] == 1 && !isset($_GET['error'])) { ?>
 
     <form class="container" method="post" action="">
-
         <div class="row name">
             <p class="col-sm-3">
                 <input <?php if (isset($valueFirstname)) { ?> value="<?php echo $valueFirstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
@@ -101,8 +106,8 @@ if (isset($_POST['submit-register'])) {
         <input type="submit" name="submit-register" id="" value="Suivant">
     </form>
 
-<?php } elseif ($_SESSION['pagination-form-sign-in'] === 2) { ?>
-    <form method="post" action="" enctype="multipart/form-data">
+<?php } elseif ($_SESSION['pagination-form-sign-in'] === 2 || isset($_GET['error'])) { ?>
+    <form method="post" action="authentification.php" enctype="multipart/form-data">
         <legend>Complément d'informations </legend>
 
         <div class="row">
@@ -114,6 +119,9 @@ if (isset($_POST['submit-register'])) {
         </div>
         <p class="col-sm-6">
             <input type="file" name="fileName" id="fileUser">
+            <?php if (isset($errorMessageFormatPicture)) { ?>
+                <span class="error"><?php echo $errorMessageFormatPicture ?></span>
+            <?php } ?>
         </p>
         </div>
         <input type="submit" name="register_submit_two" id="" value="Valider votre inscription">

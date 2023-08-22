@@ -6,4 +6,11 @@ class Config
         'fake.com',
         'spam.com'
     ];
+
+    const FORMAT_PICTURE =
+    [
+        'jpg',
+        'jpeg',
+        'png'
+    ];
 }

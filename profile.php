@@ -10,11 +10,13 @@ require_once './classes/Db.php';
 if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) && !empty($_POST['pass'])) {
     $email = $_POST['email'];
     $pass = $_POST['pass'];
+
     $db = new Db();
     $u = new User($db);
+
     $nuser = $u->connect($email, $pass);
-    // var_dump($_SESSION['user']);
-    require_once './layout/header-profile.php';
+
+
     $user = $_SESSION['user'];
 }
 if (isset($_SESSION['user'])) {

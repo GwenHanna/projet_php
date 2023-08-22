@@ -41,4 +41,9 @@ class Password
     {
         return $password === $passwordCheck;
     }
+
+    public function getPasswordHash(): string
+    {
+        return $this->passwordHash;
+    }
 }
