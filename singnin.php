@@ -5,14 +5,15 @@ require_once './classes/Email.php';
 require_once './classes/Errors.php';
 require_once './classes/Utils.php';
 require_once './classes/Password.php';
+require_once './classes/Uploadfile.php';
 
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
 }
 
-$_SESSION['pagination-form-sign-in'] = 1;
 
 if (isset($_POST['submit-register'])) {
+    $_SESSION['pagination-form-sign-in'] = 1;
     try {
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
@@ -36,6 +37,9 @@ if (isset($_POST['submit-register'])) {
             $valuePass = $_POST['password'];
         } else {
             $_SESSION['pagination-form-sign-in'] = 2;
+            if (isset($_FILES['fileName'])) {
+                var_dump($_FILES);
+            }
         }
     } catch (EmailValidationException $e) {
         $errorMessageEmail = $e->getMessage();
@@ -44,6 +48,11 @@ if (isset($_POST['submit-register'])) {
     } catch (PasswordInvalidExeption $p) {
         $errorMessagePassword = $p->getMessage();
     }
+
+    // if (isset($_POST['register_submit_two'])) {
+    //     $picture = new Uploadfile($_FILES['fileName']);
+    //     echo $picture;
+    // }
 }
 
 ?>
@@ -92,8 +101,8 @@ if (isset($_POST['submit-register'])) {
         <input type="submit" name="submit-register" id="" value="Suivant">
     </form>
 
-<?php } elseif ($_SESSION['pagination-form-sign-in'] = 2) { ?>
-    <form method="post" action="conexion.php">
+<?php } elseif ($_SESSION['pagination-form-sign-in'] === 2) { ?>
+    <form method="post" action="" enctype="multipart/form-data">
         <legend>Complément d'informations </legend>
 
         <div class="row">
@@ -104,7 +113,7 @@ if (isset($_POST['submit-register'])) {
             </p>
         </div>
         <p class="col-sm-6">
-            <input type="file" name="file" id="fileUser">
+            <input type="file" name="fileName" id="fileUser">
         </p>
         </div>
         <input type="submit" name="register_submit_two" id="" value="Valider votre inscription">
