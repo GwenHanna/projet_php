@@ -8,6 +8,7 @@ class Errors
     public const ERR_SPAM_EMAIL = 4;
     public const ERR_ALREADY_EMAIL = 5;
     public const ERR_VALIDATE_PASS = 6;
+    public const ERR_CONFIRMED_PASS = 7;
 
     /**
      * Error function
@@ -36,6 +37,9 @@ class Errors
                 break;
             case 6:
                 $res = "Ce mot de passe doit contenir 8 caractère minimum, une majuscule, une minucule, un chiffre et un caractère spécial";
+                break;
+            case 7:
+                $res = "Ce mot de passe doit être identique";
                 break;
             default:
                 $res = 'Autre Erreur';
