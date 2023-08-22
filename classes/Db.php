@@ -7,12 +7,7 @@ class Db
     private $dbName = "MyComunnityLib";
     public $conn;
 
-    /**
-     * Connect BDD function
-     *
-     * @throws PDOException
-     * @return void
-     */
+
     public function getConnect()
     {
 

@@ -27,10 +27,10 @@ if (isset($_SESSION['user'])) {
         <nav class="btn col-sm-1">
             <?php
             if (empty($_SESSION['user'])) { ?>
-                <a href="connexion.php">Connection</a>
+                <a href="connexion.php">Connexion</a>
                 <a href="singnin.php">Inscription</a>
             <?php } else { ?>
-                <a href="logout.php">Deconection</a>
+                <a href="logout.php">Déconnexion</a>
             <?php }
             ?>
 
