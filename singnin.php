@@ -65,7 +65,7 @@ if (isset($_POST['submit-register'])) {
         $errorMessagePasswordCheck = $c->getMessage();
     };
 
-    if (isset($user)) {
+    if (isset($user) && isset($_POST['submit-register'])) {
 
         try {
             //Insertion valeur user form coordonnée
@@ -80,80 +80,114 @@ if (isset($_POST['submit-register'])) {
 
 <?php if ($_SESSION['pagination-form-sign-in'] == 1 && !isset($_GET['error'])) { ?>
 
-    <form class="d-flex flex-column justify-content-center mx-auto w-75" method="post" action="">
-        <div class="d-sm-flex name">
-            <p class="col-sm-6">
-                <input <?php if (isset($firstname)) { ?> value="<?php echo $firstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
-            </p>
-            <p class="col-sm-6">
-                <input <?php if (isset($lastname)) { ?> value="<?php echo $lastname ?>" <?php } ?> class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
-            </p>
-        </div>
-        <div class="d-sm-flex email">
-            <p class="col-sm-12">
-                <input <?php if (isset($email)) { ?> value="<?php echo $email ?>" <?php } ?> class="form-control" type="text" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
-                <?php if (isset($errorMessageEmail)) { ?>
-                    <span class="error"><?php echo $errorMessageEmail ?></span>
-                <?php } ?>
-            </p>
-        </div>
+    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="">
+        <fieldset class="">
+            <legend>Coordonée</legend>
+            <div class="form-group d-sm-flex name">
+                <p class="col-sm-6">
+                    <input <?php if (isset($firstname)) { ?> value="<?php echo $firstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
+                </p>
+                <p class="col-sm-6">
+                    <input <?php if (isset($lastname)) { ?> value="<?php echo $lastname ?>" <?php } ?> class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
+                </p>
+            </div>
+            <div class="form-group d-sm-flex email">
+                <p class="col-sm-12">
+                    <input <?php if (isset($email)) { ?> value="<?php echo $email ?>" <?php } ?> class="form-control" type="text" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
+                    <?php if (isset($errorMessageEmail)) { ?>
+                        <span class="error"><?php echo $errorMessageEmail ?></span>
+                    <?php } ?>
+                </p>
+            </div>
 
-        <div class="d-sm-flex pass-word">
-            <p class="col-sm-12">
-                <input class="form-control" type="text" name="password" id="passwordUser" placeholder="Mot de passe" required>
-                <?php if (isset($errorMessagePassword)) { ?>
-                    <span class="error">
-                        <?php echo $errorMessagePassword ?>
-                    </span>
-                <?php } ?>
-            </p>
-        </div>
-        <div class="d-sm-flex pass-check">
-            <p class="col-sm-12">
-                <input class="form-control" type="text" name="passcheck" id="passchecklUser" placeholder="Confirmation mot de passe" required>
-                <?php if (isset($errorMessagePasswordCheck)) { ?>
-                    <span class="error">
-                        <?php echo $errorMessagePasswordCheck ?>
-                    </span>
-                <?php } ?>
-            </p>
-        </div>
-        <input type="submit" name="submit-register" id="" value="Suivant">
+            <div class="form-group d-sm-flex pass-word">
+                <p class="col-sm-12">
+                    <input class="form-control" type="text" name="password" id="passwordUser" placeholder="Mot de passe" required>
+                    <?php if (isset($errorMessagePassword)) { ?>
+                        <span class="error">
+                            <?php echo $errorMessagePassword ?>
+                        </span>
+                    <?php } ?>
+                </p>
+            </div>
+            <div class="form-group d-sm-flex pass-check">
+                <p class="col-sm-12">
+                    <input class="form-control" type="text" name="passcheck" id="passchecklUser" placeholder="Confirmation mot de passe" required>
+                    <?php if (isset($errorMessagePasswordCheck)) { ?>
+                        <span class="error">
+                            <?php echo $errorMessagePasswordCheck ?>
+                        </span>
+                    <?php } ?>
+                </p>
+            </div>
+            <input type="submit" name="submit-register" id="" value="Suivant">
+        </fieldset>
     </form>
 
 <?php } elseif ($_SESSION['pagination-form-sign-in'] === 2 || isset($_GET['error'])) { ?>
-    <form class="d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
-        <legend>Complément d'informations </legend>
+    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
+        <fieldset class="p-4">
+            <legend>Complément d'informations </legend>
 
-        <div class="d-sm-flex birthday">
-            <input class="col-3" type="date" name="birthday" id="birthdayUser" placeholder="Votre date de naissance">
-        </div>
-
-        <?php if (count($city) > 0) { ?>
-            <div class="d-sm-flex locality">
-                <select name="locality" id="localityUser" class="col-3">
-                    <?php foreach ($city[0] as $c) { ?>
-                        <option value="<?php echo $c ?>"><?php echo $c ?></option>
-                    <?php } ?>
-                </select>
+            <!-- Biography -->
+            <div class="form-group d-sm-flex bio">
+                <p class="col-sm-12">
+                    <textarea class="w-100" name="bio" id="bioUser" cols="30" d-sm-flexs="10" placeholder="Votre parcours chez Human Booster ..."></textarea>
+                </p>
             </div>
-        <?php } ?>
 
-        <div class="d-sm-flex bio">
-            <p class="col-sm-6">
-                <textarea name="bio" id="bioUser" cols="30" d-sm-flexs="10" placeholder="Votre parcours chez Human Booster ...">
+            <div class="form-group newsletter">
+                <p class="form-goupe d-flex justify-content-center w-100 p-2">
+                    <label class="p-1" for="newsletter">Inscrivez vous à la newletter</label>
+                    <input class="p-1" type="checkbox" name="newsletter" id="newsletter">
+                </p>
+            </div>
 
-            </textarea>
-            </p>
-        </div class="d-sm-flex picture">
-        <p class="col-sm-6">
-            <input type="file" name="fileName" id="fileUser">
-            <?php if (isset($errorMessageFormatPicture)) { ?>
-                <span class="error"><?php echo $errorMessageFormatPicture ?></span>
-            <?php } ?>
-        </p>
-        </div>
-        <input type="submit" name="register_submit_two" id="" value="Valider votre inscription">
+            <div class="form-group group-newletter">
+
+                <p class="col-12 address">
+                    <label for="addresseUser">Votre Adresse</label>
+                    <input class="col-12" type="text" name="address" id="addressUser">
+                </p>
+                <div class="form-group d-sm-flex justify-content-aroud align-items-end">
+
+                    <?php if (count($city) > 0) { ?>
+                        <p class="col-6 city">
+                            <label for="localityUser">Ville</label>
+                            <select class="col-12" name="locality" id="localityUser">
+                                <?php foreach ($city[0] as $c) { ?>
+                                    <option value="<?php echo $c ?>"><?php echo $c ?></option>
+                                <?php } ?>
+                            </select>
+                        </p>
+                    <?php } ?>
+
+                    <p class="col-6 zipcode">
+                        <label for="zipcode">Code postal</label>
+                        <input class="col-12" type="text" name="zipcode" id="zipcode">
+                    </p>
+                </div>
+
+                <p class="col-6 birthday">
+                    <label for="birthdayUser">Votre anniverssaire</label>
+                    <input class="col-12" type="date" name="birthday" id="birthdayUser" placeholder="Votre date de naissance">
+                </p>
+
+
+                <div class="form-group d-sm-flex picture">
+                    <p class="col-sm-6">
+                        <input type="file" name="fileName" id="fileUser">
+                        <?php if (isset($errorMessageFormatPicture)) { ?>
+                            <span class="error"><?php echo $errorMessageFormatPicture ?></span>
+                        <?php } ?>
+                    </p>
+                </div>
+            </div>
+
+
+            <input class="col-12 btn-dark mt-3 mb-3" type="submit" name="register_submit_two" id="" value="Valider votre inscription">
+        </fieldset>
+
     </form>
 <?php }
 

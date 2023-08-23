@@ -9,7 +9,6 @@ class EmailValidationException extends Exception
 class EmailSpamExeption extends Exception
 {
 }
-
 class EmailAlreadyBdd extends Exception
 {
 }
