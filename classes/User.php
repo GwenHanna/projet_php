@@ -33,24 +33,23 @@ class User
         $user = $r->fetch();
     }
 
-    public function InsertCoordannat(string $firstname, string $lastname, string $email, string $password, $picture = null, $bio = null): string
+    public function InsertCoordannat(string $firstname, string $lastname, string $email, string $password, $picture = null, $bio = null): bool
     {
+        $passHashed = password_hash($password, PASSWORD_DEFAULT);
         try {
-            $connexion = $this->db->getConnect();
-
-            $r = $connexion->prepare('INSERT INTO users (firstname, lastname, email, passWord, picture, bio) VALUES (:firstname, :lastname, :email, :password, :picture, :bio)');
+            $query = 'INSERT INTO users (firstname, lastname, email, passWord) VALUES (:firstname, :lastname, :email, :password)';
+            $r = $this->db->prepare($query);
 
             $r->bindParam(':firstname', $firstname, PDO::PARAM_STR);
             $r->bindParam(':lastname', $lastname, PDO::PARAM_STR);
             $r->bindParam(':email', $email, PDO::PARAM_STR);
-            $r->bindParam(':passWord', $password, PDO::PARAM_STR);
-            $r->bindParam(':picture', $picture, PDO::PARAM_STR);
-            $r->bindParam(':bio', $bio, PDO::PARAM_STR);
+            $r->bindParam(':password', $passHashed, PDO::PARAM_STR);
 
             $r->execute();
-            return 'Nouvel utilisateur inscrit avec succès';
+            return true;
         } catch (PDOException $e) {
-            return "Erreur d'inscription";
+            print_r($r->errorInfo());
+            return false;
         }
     }
 

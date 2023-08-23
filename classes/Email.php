@@ -10,6 +10,10 @@ class EmailSpamExeption extends Exception
 {
 }
 
+class EmailAlreadyBdd extends Exception
+{
+}
+
 class Email
 {
 
@@ -34,11 +38,13 @@ class Email
         }
     }
 
-    public function isEmailBDD(string $email): bool
+    public function isEmailBDD(string $email): void
     {
         $users = $this->getEmailBDD();
 
-        return in_array($email, $users);
+        if (in_array($email, $users)) {
+            throw new EmailAlreadyBdd(Errors::getCodes(Errors::ERR_ALREADY_EMAIL));
+        }
     }
 
     /**

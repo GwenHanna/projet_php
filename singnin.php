@@ -24,6 +24,7 @@ if (isset($_POST['submit-register'])) {
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
         $newEmail = new Email($_POST['email']);
+        $newEmail->isEmailBDD($_POST['email']);
 
         $valueFirstname = $_POST['firstname'];
         $valueLastname = $_POST['lastname'];
@@ -32,10 +33,10 @@ if (isset($_POST['submit-register'])) {
         //Vérification Password valid a la construction de l'instance
         $newPassword = new Password($_POST['password']);
 
-        //Vérifier si l'email n'est pas deja présente dans la BDD
-        if ($newEmail->isEmailBDD($_POST['email']) === true) {
-            $errorMessageEmail = Errors::getCodes(Errors::ERR_ALREADY_EMAIL);
-        }
+
+
+        var_dump($newEmail->getEmail());
+        var_dump($newEmail->isEmailBDD($_POST['email']));
 
         //Vérifier si l'email de confirmation est identique au premier mot de pass
         if ($newPassword->isConfirmedPassword($_POST['password'], $_POST['passcheck']) === false) {
@@ -44,21 +45,30 @@ if (isset($_POST['submit-register'])) {
         } else {
             $_SESSION['pagination-form-sign-in'] = 2;
         }
+
+        $firstname = $_POST['firstname'];
+        $lastname = $_POST['lastname'];
+        $mail = $newEmail->getEmail();
+        $pass = $_POST['password'];
+
+        $db = new Db();
+        $connexion = $db->getConnect();
+        $user = new User($connexion);
+
+        if ($user->InsertCoordannat($firstname, $lastname, $mail, $pass)) {
+            echo 'Utilisateur enregistée';
+        } else {
+            echo "Erreur d'enregistrement";
+        }
     } catch (EmailValidationException $e) {
         $errorMessageEmail = $e->getMessage();
     } catch (EmailSpamExeption $s) {
         $errorMessageEmail = $s->getMessage();
+    } catch (EmailAlreadyBdd $b) {
+        $errorMessageEmail = $b->getMessage();
     } catch (PasswordInvalidExeption $p) {
         $errorMessagePassword = $p->getMessage();
     }
-
-    $db = new Db();
-    $u = new User($db);
-    $u->InsertCoordannat($_POST['firstname'], $_POST['lastname'], $newEmail->getEmail(), $newPassword->getPasswordHash());
-
-    var_dump($newPassword->getPasswordHash());
-    var_dump(password_verify('sdfJHJK54153:', $newPassword->getPasswordHash()));
-    var_dump($u->InsertCoordannat($_POST['firstname'], $_POST['lastname'], $newEmail->getEmail(), $newPassword->getPasswordHash()));
 }
 
 ?>
