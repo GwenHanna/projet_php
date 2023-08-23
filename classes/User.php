@@ -1,6 +1,7 @@
 <?php
 require_once './classes/Db.php';
 require_once './classes/Config.php';
+require_once './classes/Utils.php';
 
 class EmailInvalidInsertionExeption extends Exception
 {
@@ -26,12 +27,36 @@ class User
     }
 
 
-    public function InsertCoordannateDetails(): void
-    {
+
+    /******************************************* REQUETE INSERTION ****************************************************************/
+
+    public function InsertCoordannateDetails(
+        string $bio = null,
+        string $newsletter = null,
+        string $address = null,
+        string $locality = null,
+        string $zipcode = null,
+        $birthday = null
+    ): void {
+
+        $query = 'INSERT INTO users (bio, newsletter, address, locality, zipcode ,birthday) 
+            VALUES (:bio, :newsletter, :address, :locality, :zipcode,:birthday)';
+        var_dump($this->db);
+
+        $r = $this->db->conn->prepare($query);
+
+        $r->bindParam(':bio', $bio, PDO::PARAM_STR);
+        $r->bindParam(':newsletter', $newsletter, PDO::PARAM_STR);
+        $r->bindParam(':address', $address, PDO::PARAM_STR);
+        $r->bindParam(':locality', $locality, PDO::PARAM_STR);
+        $r->bindParam(':zipcode', $zipcode, PDO::PARAM_STR);
+        $r->bindParam(':birthday', $birthday);
+
+        $r->execute();
     }
 
     /**
-     * Insertions des coordonnée obligatoir (form 1) function
+     * Insertions des coordonnée obligatoire (form 1) function
      *
      * @param string $firstname
      * @param string $lastname
@@ -40,8 +65,12 @@ class User
      * @throws EmailInvalidInsertionExeption Exeption en cas d'erreur a l'insertion des données utilisateur
      * @return void
      */
-    public function InsertCoordannat(string $firstname, string $lastname, string $email, string $password): void
-    {
+    public function InsertCoordannat(
+        string $firstname,
+        string $lastname,
+        string $email,
+        string $password
+    ): void {
         $newDate = date("Y-m-d H:i:s");
         $statut = 'actif';
         $passHashed = password_hash($password, PASSWORD_DEFAULT);
@@ -64,8 +93,28 @@ class User
     }
 
 
+
+
+    /******************************************* REQUETE SELECTION ****************************************************************/
+
     /**
-     * Connect function
+     * Recupere un utilisateur function
+     *
+     * @return array
+     */
+    public function getUser(): array
+    {
+        $connexion = $this->db->getConnect();
+        $recipesStatment = $connexion->prepare('SELECT * FROM `users` ');
+        $recipesStatment->execute();
+        $user = $recipesStatment->fetchAll();
+        return $user;
+    }
+
+
+
+    /**
+     * Connection Utilisateur function
      *
      * @param string $email
      * @param string $pass
@@ -81,10 +130,6 @@ class User
         $recipesStatment->execute();
 
         $user = $recipesStatment->fetch();
-
-        var_dump($pass);
-        var_dump($user['passWord']);
-        var_dump(password_verify($pass, $user['passWord']));
 
 
         if ($user === false) {
@@ -121,19 +166,5 @@ class User
             ];
             return $_SESSION['user'];
         }
-    }
-
-    /**
-     * Recupere un utilisateur function
-     *
-     * @return array
-     */
-    public function getUser(): array
-    {
-        $connexion = $this->db->getConnect();
-        $recipesStatment = $connexion->prepare('SELECT * FROM `users` ');
-        $recipesStatment->execute();
-        $user = $recipesStatment->fetchAll();
-        return $user;
     }
 }

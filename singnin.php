@@ -8,7 +8,7 @@ require_once './classes/Password.php';
 require_once './classes/Uploadfile.php';
 require_once './classes/Db.php';
 require_once './classes/User.php';
-require_once './functions/ville.php';
+require_once './classes/Address.php';
 
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
@@ -20,8 +20,9 @@ if ((isset($_GET['error']))) {
 }
 
 //Récupération des villes de france
-$city[] = getCity();
-
+$newAddress = new Address();
+$city = $newAddress->getCity();
+$zipcode = $newAddress->getZipcode();
 
 //Init pagination
 $_SESSION['pagination-form-sign-in'] = 1;
@@ -136,6 +137,7 @@ if (isset($_POST['submit-register'])) {
                 </p>
             </div>
 
+            <!-- NEWS LETTER -->
             <div class="form-group newsletter">
                 <p class="form-goupe d-flex justify-content-center w-100 p-2">
                     <label class="p-1" for="newsletter">Inscrivez vous à la newletter</label>
@@ -145,27 +147,38 @@ if (isset($_POST['submit-register'])) {
 
             <div class="form-group group-newletter">
 
+                <!-- ADRESSE -->
                 <p class="col-12 address">
                     <label for="addresseUser">Votre Adresse</label>
                     <input class="col-12" type="text" name="address" id="addressUser">
                 </p>
                 <div class="form-group d-sm-flex justify-content-aroud align-items-end">
 
+                    <!-- CITY -->
                     <?php if (count($city) > 0) { ?>
                         <p class="col-6 city">
                             <label for="localityUser">Ville</label>
                             <select class="col-12" name="locality" id="localityUser">
-                                <?php foreach ($city[0] as $c) { ?>
+                                <?php foreach ($city as $c) { ?>
                                     <option value="<?php echo $c ?>"><?php echo $c ?></option>
                                 <?php } ?>
                             </select>
                         </p>
                     <?php } ?>
 
-                    <p class="col-6 zipcode">
-                        <label for="zipcode">Code postal</label>
-                        <input class="col-12" type="text" name="zipcode" id="zipcode">
-                    </p>
+                    <!-- ZIP CODE -->
+                    <?php if (count($zipcode) > 0) { ?>
+                        <p class="col-6 zipcode">
+                            <label for="zipcode">Code postal</label>
+
+                            <select class="col-12" name="zipcode" id="zipcodeUser">
+                                <?php foreach ($zipcode as $z) { ?>
+                                    <option value="<?php echo $z ?>"><?php echo $z ?></option>
+                                <?php } ?>
+                            </select>
+                        </p>
+                    <?php } ?>
+
                 </div>
 
                 <p class="col-6 birthday">
