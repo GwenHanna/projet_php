@@ -2,6 +2,7 @@
 require_once './layout/header.php';
 require_once './classes/Email.php';
 require_once './classes/Errors.php';
+require_once './classes/Config.php';
 require_once './classes/Utils.php';
 require_once './classes/Password.php';
 require_once './classes/Uploadfile.php';
@@ -22,44 +23,36 @@ $_SESSION['pagination-form-sign-in'] = 1;
 if (isset($_POST['submit-register'])) {
     try {
 
+        $lastname = $_POST['lastname'];
+        $firstname = $_POST['firstname'];
+
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
         $newEmail = new Email($_POST['email']);
         $newEmail->isEmailBDD($_POST['email']);
-
-        $valueFirstname = $_POST['firstname'];
-        $valueLastname = $_POST['lastname'];
-        $valueEmail = $_POST['email'];
+        $email = $_POST['email'];
 
         //Vérification Password valid a la construction de l'instance
         $newPassword = new Password($_POST['password']);
-
-
-
-        var_dump($newEmail->getEmail());
-        var_dump($newEmail->isEmailBDD($_POST['email']));
-
-        //Vérifier si l'email de confirmation est identique au premier mot de pass
-        if ($newPassword->isConfirmedPassword($_POST['password'], $_POST['passcheck']) === false) {
-            $errorMessagePasswordCheck = Errors::getCodes(Errors::ERR_CONFIRMED_PASS);
-            $valuePass = $_POST['password'];
-        } else {
-            $_SESSION['pagination-form-sign-in'] = 2;
-        }
-
-        $firstname = $_POST['firstname'];
-        $lastname = $_POST['lastname'];
-        $mail = $newEmail->getEmail();
         $pass = $_POST['password'];
 
+
+        //Vérifier si le passwordcheck est identique au premier mot de pass
+        $newPassword->isConfirmedPassword($_POST['password'], $_POST['passcheck']);
+
+        //Connection a la base de donnée
         $db = new Db();
         $connexion = $db->getConnect();
+
+        //Nouvelle instance de User
         $user = new User($connexion);
 
-        if ($user->InsertCoordannat($firstname, $lastname, $mail, $pass)) {
-            echo 'Utilisateur enregistée';
-        } else {
-            echo "Erreur d'enregistrement";
-        }
+        //Insertion des donnés utilisateur dans la BDD
+        // if ($user->InsertCoordannat($firstname, $lastname, $mail, $pass)) {
+        //     echo 'Utilisateur enregistée';
+        // } else {
+        //     echo "Erreur d'enregistrement";
+        // }
+        $_SESSION['pagination-form-sign-in'] = 2;
     } catch (EmailValidationException $e) {
         $errorMessageEmail = $e->getMessage();
     } catch (EmailSpamExeption $s) {
@@ -68,6 +61,14 @@ if (isset($_POST['submit-register'])) {
         $errorMessageEmail = $b->getMessage();
     } catch (PasswordInvalidExeption $p) {
         $errorMessagePassword = $p->getMessage();
+    } catch (PasswordIsNotConfirmedExeption $c) {
+        $errorMessagePasswordCheck = $c->getMessage();
+    }
+
+    try {
+        $user->InsertCoordannat($firstname, $lastname, $email, $pass);
+    } catch (EmailInvalidInsertionExeption $i) {
+        Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
     }
 }
 
@@ -78,15 +79,15 @@ if (isset($_POST['submit-register'])) {
     <form class="container" method="post" action="">
         <div class="row name">
             <p class="col-sm-3">
-                <input <?php if (isset($valueFirstname)) { ?> value="<?php echo $valueFirstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
+                <input <?php if (isset($firstname)) { ?> value="<?php echo $firstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
             </p>
             <p class="col-sm-3">
-                <input <?php if (isset($valueLastname)) { ?> value="<?php echo $valueLastname ?>" <?php } ?> class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
+                <input <?php if (isset($lastname)) { ?> value="<?php echo $lastname ?>" <?php } ?> class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
             </p>
         </div>
         <div class="row email">
             <p class="col-sm-6">
-                <input <?php if (isset($valueEmail)) { ?> value="<?php echo $valueEmail ?>" <?php } ?> class="form-control" type="text" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
+                <input <?php if (isset($email)) { ?> value="<?php echo $email ?>" <?php } ?> class="form-control" type="text" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
                 <?php if (isset($errorMessageEmail)) { ?>
                     <span class="error"><?php echo $errorMessageEmail ?></span>
                 <?php } ?>

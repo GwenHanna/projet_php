@@ -1,8 +1,10 @@
 <?php
 require_once './classes/Db.php';
-require_once './classes/Errors.php';
-require_once './classes/Utils.php';
+require_once './classes/Config.php';
 
+class EmailInvalidInsertionExeption extends Exception
+{
+}
 class User
 {
     private $id;
@@ -49,7 +51,7 @@ class User
             return true;
         } catch (PDOException $e) {
             print_r($r->errorInfo());
-            return false;
+            throw new EmailInvalidInsertionExeption(Errors::getCodes(Config::ERR_INSERT_USER));
         }
     }
 
@@ -78,9 +80,9 @@ class User
 
 
         if ($user === false) {
-            Utils::redirect('connexion.php?error=' . Errors::ERR_CONNECT_EMAIL);
+            Utils::redirect('connexion.php?error=' . Config::ERR_CONNECT_EMAIL);
         } else if (!password_verify($pass, $user['passWord'])) {
-            Utils::redirect('connexion.php?error=' . Errors::ERR_CONNECT_PASS);
+            Utils::redirect('connexion.php?error=' . Config::ERR_CONNECT_PASS);
         } else {
             echo "Vous êtes connecter";
 

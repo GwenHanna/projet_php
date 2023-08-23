@@ -1,15 +1,15 @@
 <?php
-require_once './classes/Utils.php';
+require_once './classes/Config.php';
 class Errors
 {
-    public const ERR_CONNECT_EMAIL = 1;
-    public const ERR_CONNECT_PASS = 2;
-    public const ERR_VALIDATION_EMAIL = 3;
-    public const ERR_SPAM_EMAIL = 4;
-    public const ERR_ALREADY_EMAIL = 5;
-    public const ERR_VALIDATE_PASS = 6;
-    public const ERR_CONFIRMED_PASS = 7;
-    public const ERR_FORMAT_PICTURE = 8;
+    // public const ERR_CONNECT_EMAIL = 1;
+    // public const ERR_CONNECT_PASS = 2;
+    // public const ERR_VALIDATION_EMAIL = 3;
+    // public const ERR_SPAM_EMAIL = 4;
+    // public const ERR_ALREADY_EMAIL = 5;
+    // public const ERR_VALIDATE_PASS = 6;
+    // public const ERR_CONFIRMED_PASS = 7;
+    // public const ERR_FORMAT_PICTURE = 8;
 
     /**
      * Error function
@@ -45,6 +45,10 @@ class Errors
             case 8:
                 $res = "Le format accepter sont '.jpg', '.jpeg', 'png'";
                 break;
+            case 9:
+                $res = "Echec d'enregistrement !";
+                break;
+
             default:
                 $res = 'Autre Erreur';
                 echo $code;

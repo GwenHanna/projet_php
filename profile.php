@@ -3,7 +3,6 @@
 </header>
 <?php
 
-require_once './classes/Utils.php';
 require_once './classes/User.php';
 require_once './classes/Db.php';
 

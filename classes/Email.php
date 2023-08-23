@@ -30,20 +30,27 @@ class Email
     public function __construct(string $email)
     {
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
-            throw new EmailValidationException(Errors::getCodes(Errors::ERR_VALIDATION_EMAIL));
+            throw new EmailValidationException(Errors::getCodes(Config::ERR_VALIDATION_EMAIL));
         } elseif ($this->isSpam($email) === true) {
-            throw new EmailSpamExeption(Errors::getCodes(Errors::ERR_SPAM_EMAIL));
+            throw new EmailSpamExeption(Errors::getCodes(Config::ERR_SPAM_EMAIL));
         } else {
             $this->email = $email;
         }
     }
 
+    /**
+     * Envoie une Exeption si l'email est déja présente dans la BDD
+     *
+     * @throws EmailAlreadyBdd 
+     * @param string $email
+     * @return void
+     */
     public function isEmailBDD(string $email): void
     {
         $users = $this->getEmailBDD();
 
         if (in_array($email, $users)) {
-            throw new EmailAlreadyBdd(Errors::getCodes(Errors::ERR_ALREADY_EMAIL));
+            throw new EmailAlreadyBdd(Errors::getCodes(Config::ERR_ALREADY_EMAIL));
         }
     }
 
@@ -59,6 +66,7 @@ class Email
 
         $r = $connexion->prepare('SELECT email FROM users');
         $r->execute();
+
         //Récupération de tout les Emails dans un array 1 dimmension
         $users = array_column($r->fetchAll(), 'email');
 
@@ -66,7 +74,7 @@ class Email
     }
 
     /**
-     * Undocumented function
+     * Vérifie si un email est un spam 
      *
      * @param string $email
      * @return boolean
@@ -77,6 +85,11 @@ class Email
         return in_array($domain[1], Config::SPAM_DOMAIN);
     }
 
+    /**
+     * Récupère l'email de user
+     *
+     * @return string
+     */
     public function getEmail(): string
     {
         return $this->email;

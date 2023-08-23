@@ -33,7 +33,7 @@ class Uploadfile
 
         if ($this->checkFormatPicture($name) === false) {
             echo 'ok';
-            throw new FormatInvalidExeption(Errors::getCodes(Errors::ERR_FORMAT_PICTURE));
+            throw new FormatInvalidExeption(Errors::getCodes(Config::ERR_FORMAT_PICTURE));
         }
 
         $this->name = $name;

@@ -1,8 +1,13 @@
 <?php
 require_once './classes/Errors.php';
+require_once './classes/Config.php';
 
 
 class PasswordInvalidExeption extends Exception
+{
+}
+
+class PasswordIsNotConfirmedExeption extends Exception
 {
 }
 class Password
@@ -23,7 +28,7 @@ class Password
     {
 
         if (filter_var($password, FILTER_VALIDATE_REGEXP, array("options" => array("regexp" => self::PASS_VALID))) === false) {
-            throw new PasswordInvalidExeption(Errors::getCodes(Errors::ERR_VALIDATE_PASS));
+            throw new PasswordInvalidExeption(Errors::getCodes(Config::ERR_VALIDATE_PASS));
         }
         //Hash le mot de pass
         $this->passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -35,11 +40,13 @@ class Password
      *
      * @param string $password
      * @param string $passwordCheck
-     * @return boolean
+     * @throws PasswordIsNotConfirmedExeption
      */
-    public function isConfirmedPassword(string $password, string $passwordCheck): bool
+    public function isConfirmedPassword(string $password, string $passwordCheck): void
     {
-        return $password === $passwordCheck;
+        if ($password !== $passwordCheck) {
+            throw new PasswordIsNotConfirmedExeption(Errors::getCodes(Config::ERR_CONFIRMED_PASS));
+        }
     }
 
     public function getPasswordHash(): string
