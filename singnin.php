@@ -8,6 +8,7 @@ require_once './classes/Password.php';
 require_once './classes/Uploadfile.php';
 require_once './classes/Db.php';
 require_once './classes/User.php';
+require_once './functions/ville.php';
 
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
@@ -18,11 +19,15 @@ if ((isset($_GET['error']))) {
     $errorMessageFormatPicture =  Errors::getCodes($_GET['error']);
 }
 
+//Récupération des villes de france
+$city[] = getCity();
+
+
+//Init pagination
 $_SESSION['pagination-form-sign-in'] = 1;
 
 if (isset($_POST['submit-register'])) {
     try {
-
         $lastname = $_POST['lastname'];
         $firstname = $_POST['firstname'];
 
@@ -46,12 +51,7 @@ if (isset($_POST['submit-register'])) {
         //Nouvelle instance de User
         $user = new User($connexion);
 
-        //Insertion des donnés utilisateur dans la BDD
-        // if ($user->InsertCoordannat($firstname, $lastname, $mail, $pass)) {
-        //     echo 'Utilisateur enregistée';
-        // } else {
-        //     echo "Erreur d'enregistrement";
-        // }
+        //Pagination form 2
         $_SESSION['pagination-form-sign-in'] = 2;
     } catch (EmailValidationException $e) {
         $errorMessageEmail = $e->getMessage();
@@ -63,12 +63,16 @@ if (isset($_POST['submit-register'])) {
         $errorMessagePassword = $p->getMessage();
     } catch (PasswordIsNotConfirmedExeption $c) {
         $errorMessagePasswordCheck = $c->getMessage();
-    }
+    };
 
-    try {
-        $user->InsertCoordannat($firstname, $lastname, $email, $pass);
-    } catch (EmailInvalidInsertionExeption $i) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
+    if (isset($user)) {
+
+        try {
+            //Insertion valeur user form coordonnée
+            $user->InsertCoordannat($firstname, $lastname, $email, $pass);
+        } catch (EmailInvalidInsertionExeption $i) {
+            Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
+        }
     }
 }
 
@@ -76,17 +80,17 @@ if (isset($_POST['submit-register'])) {
 
 <?php if ($_SESSION['pagination-form-sign-in'] == 1 && !isset($_GET['error'])) { ?>
 
-    <form class="container" method="post" action="">
-        <div class="row name">
-            <p class="col-sm-3">
+    <form class="d-flex flex-column justify-content-center mx-auto w-75" method="post" action="">
+        <div class="d-sm-flex name">
+            <p class="col-sm-6">
                 <input <?php if (isset($firstname)) { ?> value="<?php echo $firstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
             </p>
-            <p class="col-sm-3">
+            <p class="col-sm-6">
                 <input <?php if (isset($lastname)) { ?> value="<?php echo $lastname ?>" <?php } ?> class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
             </p>
         </div>
-        <div class="row email">
-            <p class="col-sm-6">
+        <div class="d-sm-flex email">
+            <p class="col-sm-12">
                 <input <?php if (isset($email)) { ?> value="<?php echo $email ?>" <?php } ?> class="form-control" type="text" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
                 <?php if (isset($errorMessageEmail)) { ?>
                     <span class="error"><?php echo $errorMessageEmail ?></span>
@@ -94,9 +98,9 @@ if (isset($_POST['submit-register'])) {
             </p>
         </div>
 
-        <div class="row pass-word">
-            <p class="col-sm-6">
-                <input <?php if (isset($valuePass)) { ?> value="<?php echo $valuePass ?>" <?php } ?> class="form-control" type="text" name="password" id="passwordUser" placeholder="Mot de passe" required>
+        <div class="d-sm-flex pass-word">
+            <p class="col-sm-12">
+                <input class="form-control" type="text" name="password" id="passwordUser" placeholder="Mot de passe" required>
                 <?php if (isset($errorMessagePassword)) { ?>
                     <span class="error">
                         <?php echo $errorMessagePassword ?>
@@ -104,8 +108,8 @@ if (isset($_POST['submit-register'])) {
                 <?php } ?>
             </p>
         </div>
-        <div class="row pass-check">
-            <p class="col-sm-6">
+        <div class="d-sm-flex pass-check">
+            <p class="col-sm-12">
                 <input class="form-control" type="text" name="passcheck" id="passchecklUser" placeholder="Confirmation mot de passe" required>
                 <?php if (isset($errorMessagePasswordCheck)) { ?>
                     <span class="error">
@@ -118,16 +122,30 @@ if (isset($_POST['submit-register'])) {
     </form>
 
 <?php } elseif ($_SESSION['pagination-form-sign-in'] === 2 || isset($_GET['error'])) { ?>
-    <form method="post" action="authentification.php" enctype="multipart/form-data">
+    <form class="d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
         <legend>Complément d'informations </legend>
 
-        <div class="row">
+        <div class="d-sm-flex birthday">
+            <input class="col-3" type="date" name="birthday" id="birthdayUser" placeholder="Votre date de naissance">
+        </div>
+
+        <?php if (count($city) > 0) { ?>
+            <div class="d-sm-flex locality">
+                <select name="locality" id="localityUser" class="col-3">
+                    <?php foreach ($city[0] as $c) { ?>
+                        <option value="<?php echo $c ?>"><?php echo $c ?></option>
+                    <?php } ?>
+                </select>
+            </div>
+        <?php } ?>
+
+        <div class="d-sm-flex bio">
             <p class="col-sm-6">
-                <textarea name="bio" id="bioUser" cols="30" rows="10" placeholder="Votre parcours chez Human Booster ...">
+                <textarea name="bio" id="bioUser" cols="30" d-sm-flexs="10" placeholder="Votre parcours chez Human Booster ...">
 
             </textarea>
             </p>
-        </div>
+        </div class="d-sm-flex picture">
         <p class="col-sm-6">
             <input type="file" name="fileName" id="fileUser">
             <?php if (isset($errorMessageFormatPicture)) { ?>

@@ -1,10 +1,7 @@
 <?php
+require_once './classes/Config.php';
 class Db
 {
-    private $host = "host.docker.internal";
-    private $userName = "root";
-    private $passWord = "";
-    private $dbName = "MyComunnityLib";
     public $conn;
 
     /**
@@ -17,7 +14,7 @@ class Db
     {
 
         try {
-            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->dbName, $this->userName, $this->passWord);
+            $this->conn = new PDO("mysql:host=" . Config::HOST . ";dbname=" . Config::DB_NAME_APP, Config::USER_NAME, Config::PASSWORD);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $exception) {
             echo "Erreur de connexion : " . $exception->getMessage();

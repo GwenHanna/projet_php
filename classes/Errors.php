@@ -34,7 +34,7 @@ class Errors
                 $res = "Cet Email est un spam !";
                 break;
             case 5:
-                $res = "Cet Email est déja présente";
+                $res = "Cet Email est déja présent";
                 break;
             case 6:
                 $res = "Ce mot de passe doit contenir 8 caractère minimum, une majuscule, une minucule, un chiffre et un caractère spécial";

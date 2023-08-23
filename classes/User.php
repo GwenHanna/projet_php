@@ -25,30 +25,38 @@ class User
         $this->db = $db;
     }
 
-    private function getPass($pass)
-    {
-        $connexion = $this->db->getConnect();
 
-        $r = $connexion->prepare('SELECT `passWord` FROM `users` WHERE `passWord` = :pass');
-        $r->bindParam(':pass', $pass, PDO::PARAM_STR);
-        $r->execute();
-        $user = $r->fetch();
+    public function InsertCoordannateDetails(): void
+    {
     }
 
-    public function InsertCoordannat(string $firstname, string $lastname, string $email, string $password, $picture = null, $bio = null): bool
+    /**
+     * Insertions des coordonnée obligatoir (form 1) function
+     *
+     * @param string $firstname
+     * @param string $lastname
+     * @param string $email
+     * @param string $password
+     * @throws EmailInvalidInsertionExeption Exeption en cas d'erreur a l'insertion des données utilisateur
+     * @return void
+     */
+    public function InsertCoordannat(string $firstname, string $lastname, string $email, string $password): void
     {
+        $newDate = date("Y-m-d H:i:s");
+        $statut = 'actif';
         $passHashed = password_hash($password, PASSWORD_DEFAULT);
         try {
-            $query = 'INSERT INTO users (firstname, lastname, email, passWord) VALUES (:firstname, :lastname, :email, :password)';
+            $query = 'INSERT INTO users (firstname, lastname, email, passWord, dateCreated ,statut) VALUES (:firstname, :lastname, :email, :password, :datecreated,:statut)';
             $r = $this->db->prepare($query);
 
             $r->bindParam(':firstname', $firstname, PDO::PARAM_STR);
             $r->bindParam(':lastname', $lastname, PDO::PARAM_STR);
             $r->bindParam(':email', $email, PDO::PARAM_STR);
             $r->bindParam(':password', $passHashed, PDO::PARAM_STR);
+            $r->bindParam(':datecreated', $newDate);
+            $r->bindParam(':statut', $statut);
 
             $r->execute();
-            return true;
         } catch (PDOException $e) {
             print_r($r->errorInfo());
             throw new EmailInvalidInsertionExeption(Errors::getCodes(Config::ERR_INSERT_USER));

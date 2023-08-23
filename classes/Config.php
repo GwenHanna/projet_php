@@ -3,6 +3,14 @@
 class Config
 {
 
+    //CONSTANTE INIT BDD
+    const HOST = "host.docker.internal";
+    const USER_NAME = "root";
+    const PASSWORD = "";
+    const DB_NAME_CITY = "france";
+    const DB_NAME_APP = "mycomunnitylib";
+
+
     //CONSTANTE ERROR
     public const ERR_CONNECT_EMAIL = 1;
     public const ERR_CONNECT_PASS = 2;
@@ -15,16 +23,16 @@ class Config
     public const ERR_INSERT_USER = 9;
 
 
-
     //CONSTANTE SUCCESS
     public const SUCC_INSERT_USER = 100;
 
-
+    //Constante spam
     const SPAM_DOMAIN = [
         'fake.com',
         'spam.com'
     ];
 
+    //constante format picture
     const FORMAT_PICTURE =
     [
         'jpg',
