@@ -5,10 +5,12 @@ require_once './classes/Errors.php';
 require_once './classes/Config.php';
 require_once './classes/Utils.php';
 require_once './classes/Password.php';
-require_once './classes/Uploadfile.php';
+require_once './classes/File.php';
 require_once './classes/Db.php';
 require_once './classes/User.php';
 require_once './classes/Address.php';
+require_once './classes/users_has_files.php';
+
 
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
@@ -28,6 +30,12 @@ $zipcode = $newAddress->getZipcode();
 $_SESSION['pagination-form-sign-in'] = 1;
 
 if (isset($_POST['submit-register'])) {
+
+    if (isset($_FILES['fileName']) && !empty($_FILES['fileName'])) {
+
+        $picture = new File($_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['tmp_name'], $_FILES['fileName']['error'], $_FILES['fileName']['size']);
+    }
+
     try {
         $lastname = $_POST['lastname'];
         $firstname = $_POST['firstname'];
@@ -49,8 +57,12 @@ if (isset($_POST['submit-register'])) {
         $db = new Db();
         $connexion = $db->getConnect();
 
+
         //Nouvelle instance de User
         $user = new User($connexion);
+
+        //PHOT DE PROFIL
+
 
         //Pagination form 2
         $_SESSION['pagination-form-sign-in'] = 2;
@@ -69,8 +81,16 @@ if (isset($_POST['submit-register'])) {
     if (isset($user) && isset($_POST['submit-register'])) {
 
         try {
-            //Insertion valeur user form coordonnée
+            //Insertion valeur user form coordonnée Enregistre l'id du nouvel utilisateur
             $user->InsertCoordannat($firstname, $lastname, $email, $pass);
+            $lastIdUser = $db->conn->lastInsertId();
+
+            //Insertion de la photo de profile
+            $picture->InsertFileBDD();
+            $lastIdFile = $connexion->lastInsertId();
+
+            //Insertion des id de user et id de file
+            Users_has_files::InsertIdUserAndIdFile($lastIdUser, $lastIdFile, $db);
         } catch (EmailInvalidInsertionExeption $i) {
             Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
         }
@@ -81,9 +101,10 @@ if (isset($_POST['submit-register'])) {
 
 <?php if ($_SESSION['pagination-form-sign-in'] == 1 && !isset($_GET['error'])) { ?>
 
-    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="">
+    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="" enctype="multipart/form-data">
         <fieldset class="">
             <legend>Coordonée</legend>
+            <!-- NAME -->
             <div class="form-group d-sm-flex name">
                 <p class="col-sm-6">
                     <input <?php if (isset($firstname)) { ?> value="<?php echo $firstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
@@ -92,6 +113,7 @@ if (isset($_POST['submit-register'])) {
                     <input <?php if (isset($lastname)) { ?> value="<?php echo $lastname ?>" <?php } ?> class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
                 </p>
             </div>
+            <!-- EMAIL -->
             <div class="form-group d-sm-flex email">
                 <p class="col-sm-12">
                     <input <?php if (isset($email)) { ?> value="<?php echo $email ?>" <?php } ?> class="form-control" type="text" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
@@ -100,7 +122,16 @@ if (isset($_POST['submit-register'])) {
                     <?php } ?>
                 </p>
             </div>
-
+            <!-- PICTURE -->
+            <div class="form-group d-sm-flex picture">
+                <p class="col-sm-6">
+                    <input type="file" name="fileName" id="fileUser">
+                    <?php if (isset($errorMessageFormatPicture)) { ?>
+                        <span class="error"><?php echo $errorMessageFormatPicture ?></span>
+                    <?php } ?>
+                </p>
+            </div>
+            <!-- PASS WORD -->
             <div class="form-group d-sm-flex pass-word">
                 <p class="col-sm-12">
                     <input class="form-control" type="text" name="password" id="passwordUser" placeholder="Mot de passe" required>
@@ -111,6 +142,7 @@ if (isset($_POST['submit-register'])) {
                     <?php } ?>
                 </p>
             </div>
+            <!-- NEWS LETTER CHECKBOX -->
             <div class="form-group d-sm-flex pass-check">
                 <p class="col-sm-12">
                     <input class="form-control" type="text" name="passcheck" id="passchecklUser" placeholder="Confirmation mot de passe" required>
@@ -121,16 +153,17 @@ if (isset($_POST['submit-register'])) {
                     <?php } ?>
                 </p>
             </div>
+            <!-- SUBMIT -->
             <input type="submit" name="submit-register" id="" value="Suivant">
         </fieldset>
     </form>
 
 <?php } elseif ($_SESSION['pagination-form-sign-in'] === 2 || isset($_GET['error'])) { ?>
-    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
+    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php">
         <fieldset class="p-4">
             <legend>Complément d'informations </legend>
 
-            <!-- Biography -->
+            <!-- BIOGRAPHY -->
             <div class="form-group d-sm-flex bio">
                 <p class="col-sm-12">
                     <textarea class="w-100" name="bio" id="bioUser" cols="30" d-sm-flexs="10" placeholder="Votre parcours chez Human Booster ..."></textarea>
@@ -187,14 +220,7 @@ if (isset($_POST['submit-register'])) {
                 </p>
 
 
-                <div class="form-group d-sm-flex picture">
-                    <p class="col-sm-6">
-                        <input type="file" name="fileName" id="fileUser">
-                        <?php if (isset($errorMessageFormatPicture)) { ?>
-                            <span class="error"><?php echo $errorMessageFormatPicture ?></span>
-                        <?php } ?>
-                    </p>
-                </div>
+
             </div>
 
 

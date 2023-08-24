@@ -39,20 +39,46 @@ class User
         $birthday = null
     ): void {
 
-        $query = 'INSERT INTO users (bio, newsletter, address, locality, zipcode ,birthday) 
-            VALUES (:bio, :newsletter, :address, :locality, :zipcode,:birthday)';
-        var_dump($this->db);
+        try {
+            var_dump($bio);
+            var_dump($newsletter);
+            var_dump($address);
+            var_dump($locality);
+            var_dump($zipcode);
+            var_dump($this->getLastIdBDD());
 
-        $r = $this->db->conn->prepare($query);
+            $lastIdUserBdd = $this->getLastIdBDD();
 
-        $r->bindParam(':bio', $bio, PDO::PARAM_STR);
-        $r->bindParam(':newsletter', $newsletter, PDO::PARAM_STR);
-        $r->bindParam(':address', $address, PDO::PARAM_STR);
-        $r->bindParam(':locality', $locality, PDO::PARAM_STR);
-        $r->bindParam(':zipcode', $zipcode, PDO::PARAM_STR);
-        $r->bindParam(':birthday', $birthday);
+            $query = 'UPDATE users
+                SET bio = :bio, newsletter = :newsletter, address = :address, locality = :locality, zipcode = :zipcode, birthday = :birthday
+                WHERE id = :idUser';
 
-        $r->execute();
+            echo "Values to insert:<br>";
+            echo "bio: $bio<br>";
+            echo "newsletter: $newsletter<br>";
+            echo "address: $address<br>";
+            echo "locality: $locality<br>";
+            echo "zipcode: $zipcode<br>";
+            echo "birthday: $birthday<br>";
+            echo "idUser: $lastIdUserBdd<br>";
+
+            $r = $this->db->conn->prepare($query);
+
+
+            $r->bindParam(':bio', $bio, PDO::PARAM_STR);
+            $r->bindParam(':newsletter', $newsletter, PDO::PARAM_STR);
+            $r->bindParam(':address', $address, PDO::PARAM_STR);
+            $r->bindParam(':locality', $locality, PDO::PARAM_STR);
+            $r->bindParam(':zipcode', $zipcode, PDO::PARAM_STR);
+            $r->bindParam(':birthday', $birthday, PDO::PARAM_STR);
+            $r->bindParam(':idUser', $lastIdUserBdd, PDO::PARAM_INT);
+
+
+            $r->execute();
+        } catch (PDOException $th) {
+            var_dump($th->getMessage());
+            throw new EmailInvalidInsertionExeption(Errors::getCodes(Config::ERR_INSERT_USER));
+        }
     }
 
     /**
@@ -96,6 +122,25 @@ class User
 
 
     /******************************************* REQUETE SELECTION ****************************************************************/
+
+    private function getLastIdBDD(): int
+    {
+
+        $querry = 'SELECT MAX(id) AS last_id FROM users';
+
+        $connexion = $this->db->getConnect();
+
+        $r = $connexion->prepare($querry);
+
+        if ($r->execute()) {
+            $result = $r->fetch();
+            $lastId = (int)$result['last_id'];
+            return $lastId;
+        } else {
+            var_dump('Erreur de co');
+        }
+    }
+
 
     /**
      * Recupere un utilisateur function
