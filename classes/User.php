@@ -32,7 +32,7 @@ class User
 
     public function InsertCoordannateDetails(
         string $bio = null,
-        string $newsletter = null,
+        bool $newsletter = false,
         string $address = null,
         string $locality = null,
         string $zipcode = null,
@@ -66,7 +66,7 @@ class User
 
 
             $r->bindParam(':bio', $bio, PDO::PARAM_STR);
-            $r->bindParam(':newsletter', $newsletter, PDO::PARAM_STR);
+            $r->bindParam(':newsletter', $newsletter, PDO::PARAM_BOOL);
             $r->bindParam(':address', $address, PDO::PARAM_STR);
             $r->bindParam(':locality', $locality, PDO::PARAM_STR);
             $r->bindParam(':zipcode', $zipcode, PDO::PARAM_STR);
@@ -122,6 +122,25 @@ class User
 
 
     /******************************************* REQUETE SELECTION ****************************************************************/
+
+    private function getPictureUser(int $Files_id)
+    {
+        $querry = 'SELECT Files_id FROM users JOIN users_has_files ON Users_id = users_has_files.Users_id JOIN files ON Files_id = users_has_files.Files_id WHERE :Files_id = Users_id';
+
+        $r = $this->db->conn->prepare($querry);
+        $r->bindParam(':Files_id', $Files_id);
+        //test verrification
+        try {
+            $r->execute();
+            $result = $r->fetch();
+            $picture = array_column($result, 'picture_profil');
+            return $picture;
+        } catch (PDOException $e) {
+            $errorMessageConnect =  $e->getMessage();
+            var_dump($errorMessageConnect);
+        }
+    }
+
 
     private function getLastIdBDD(): int
     {
@@ -190,8 +209,6 @@ class User
             $this->firstname = $user['firstname'];
             $this->lastname = $user['lastname'];
             $this->email = $user['email'];
-            $this->email = $user['email'];
-            $this->picture = $user['picture'];
             $this->statut = $user['statut'];
             $this->datecreated = $user['dateCreated'];
             $this->birthday = $user['birthday'];
@@ -202,13 +219,15 @@ class User
                 'id' => $this->id,
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
-                'picture' => $this->picture,
+                'picture' => $this->getPictureUser($this->id),
                 'statut' => $this->statut,
                 'birthday' => $this->birthday,
                 'bio' => $this->bio,
                 'locality' => $this->locality,
                 'email' => $this->email
             ];
+            var_dump($this->getPictureUser($this->id));
+
             return $_SESSION['user'];
         }
     }

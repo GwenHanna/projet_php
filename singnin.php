@@ -31,10 +31,7 @@ $_SESSION['pagination-form-sign-in'] = 1;
 
 if (isset($_POST['submit-register'])) {
 
-    if (isset($_FILES['fileName']) && !empty($_FILES['fileName'])) {
 
-        $picture = new File($_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['tmp_name'], $_FILES['fileName']['error'], $_FILES['fileName']['size']);
-    }
 
     try {
         $lastname = $_POST['lastname'];
@@ -81,16 +78,18 @@ if (isset($_POST['submit-register'])) {
     if (isset($user) && isset($_POST['submit-register'])) {
 
         try {
-            //Insertion valeur user form coordonnée Enregistre l'id du nouvel utilisateur
+            //Insertion des id de user et id de file
             $user->InsertCoordannat($firstname, $lastname, $email, $pass);
+
+            //Insertion valeur user form coordonnée sEnregistre l'id du nouvel utilisateur
             $lastIdUser = $db->conn->lastInsertId();
 
-            //Insertion de la photo de profile
-            $picture->InsertFileBDD();
-            $lastIdFile = $connexion->lastInsertId();
-
-            //Insertion des id de user et id de file
-            Users_has_files::InsertIdUserAndIdFile($lastIdUser, $lastIdFile, $db);
+            if (isset($_FILES['fileName']) && !empty($_FILES['fileName']) && $_FILES['fileName']['error'] === 0) {
+                $picture = new File($_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['tmp_name'], $_FILES['fileName']['error'], $_FILES['fileName']['size']);
+                $picture->InsertFileBDD();
+                $lastIdFile = (int)Users_has_files::getLastIdFile($db)['MAX(id)'];
+                Users_has_files::InsertIdUserAndIdFile($lastIdUser, $lastIdFile, $db);
+            }
         } catch (EmailInvalidInsertionExeption $i) {
             Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
         }

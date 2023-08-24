@@ -33,8 +33,9 @@ if (isset($_POST['register_submit_two'])) {
             if (!isset($_POST['newsletter']) && isset($_POST['bio'])) {
                 $user->InsertCoordannateDetails($_POST['bio']);
             } else {
+                $newsletterOk = true;
                 //Update de l'utilisateur a l'inscription avec newsletter
-                $user->InsertCoordannateDetails($_POST['bio'], $_POST['newsletter'], $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
+                $user->InsertCoordannateDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
             }
         }
     } catch (FormatInvalidExeption $p) {
