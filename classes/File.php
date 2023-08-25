@@ -9,15 +9,14 @@ class FormatInvalidExeption extends Exception
 class File
 {
 
-
-
-    // private string $file;
+    private string $file;
     private string $name;
     private string $format;
-    private string $tmpname;
+    private string $pathfilePicture;
     private string $error;
     private string $size;
-    private $conn;
+    private string $tmpname;
+    private $db;
 
 
     /**
@@ -25,35 +24,55 @@ class File
      *
      * @param string $name
      * @param string $format
-     * @param string $tmpname
      * @param string $error
      * @param string $size
      * 
      * @throws FormatInvalidExeption Vérifie le format pour une photo
      */
-    public function __construct(string $name, string $format, string $tmpname, string $error, string $size)
+    //CONSTANTE
+    const DIR_TARGET_PICTURE_PROFILE = './uploads/picture_profile/';
+
+
+    public function __construct(string $name, string $format, string $error, string $size, string $tmpname)
     {
 
         if ($this->checkFormatPicture($name) === false) {
-            echo 'ok';
             throw new FormatInvalidExeption(Errors::getCodes(Config::ERR_FORMAT_PICTURE));
         }
 
         $this->name = $name;
         $this->format = $format;
-        $this->tmpname = $tmpname;
+        $this->pathfilePicture = $this->getPathFilePictureProfile();
         $this->error = $error;
+        $this->tmpname = $tmpname;
         $this->size = $size;
-        $this->conn = new Db();
+        $this->db->conn = new Db();
+
+        var_dump($this->tmpname);
+        var_dump($this->pathfilePicture);
+        if (move_uploaded_file($this->tmpname, $this->pathfilePicture)) {
+            echo 'fichier enregistré ';
+        } else {
+            echo 'Probleme';
+        }
+    }
+
+    /*********************************** FONCTIONS ************************************************ */
+
+    /**
+     * Retourne le chemin du fichier pour les fichier
+     *
+     * @return string
+     */
+    private function getPathFilePictureProfile(): string
+    {
+        return self::DIR_TARGET_PICTURE_PROFILE . basename($this->name);
     }
 
 
 
-    /*********************** REQUETE SQL *********************************/
 
-
-
-
+    /*********************************** REQUETE SQL************************************************ */
     /**
      * Insertion des fichier dans la bdd
      *
@@ -61,22 +80,41 @@ class File
      */
     public function InsertFileBDD()
     {
-        $query = 'INSERT INTO files (name, format, tmpname, size, datecreated) 
-        VALUES (:name, :format, :tmpname, :size, NOW())';
+        $query = 'INSERT INTO files (name, format, path_file, size, datecreated) 
+        VALUES (:name, :format, :path_file, :size, NOW())';
 
-        $conn = $this->conn->getConnect();
-        $r = $conn->prepare($query);
+        $conn = $this->db->conn->getdb->connect();
+        $r = $conn->conn->prepare($query);
         // var_dump($r);
         $r->bindParam(':name', $this->name, PDO::PARAM_STR);
         $r->bindParam(':format', $this->format, PDO::PARAM_STR);
-        $r->bindParam(':tmpname', $this->tmpname, PDO::PARAM_STR);
+        $r->bindParam(':path_file', $this->pathfilePicture, PDO::PARAM_STR);
         $r->bindParam(':size', $this->size, PDO::PARAM_STR);
 
         //test verrification
         try {
             $r->execute();
         } catch (PDOException $e) {
-            $errorMessageConnect =  $e->getMessage();
+            $errorMessagedb =  $e->getMessage();
+        }
+    }
+
+    /**
+     * Récupère le chemin d'un fichier
+     *
+     * @throws  PDOExeption Si erreur de recuperation du chemin du fichier
+     * @return string
+     */
+    public function getPathFile(): string
+    {
+        $querry = '';
+
+        $r = $this->db->conn->prepare($querry);
+
+        if ($r->execute()) {
+            return $r->fetch();
+        } else {
+            throw new PDOException('Impossible de récupérer le chemin du fichier !');
         }
     }
 

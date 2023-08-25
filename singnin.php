@@ -85,13 +85,16 @@ if (isset($_POST['submit-register'])) {
             $lastIdUser = $db->conn->lastInsertId();
 
             if (isset($_FILES['fileName']) && !empty($_FILES['fileName']) && $_FILES['fileName']['error'] === 0) {
-                $picture = new File($_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['tmp_name'], $_FILES['fileName']['error'], $_FILES['fileName']['size']);
+                var_dump($_FILES['fileName']);
+                $picture = new File($_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['error'], $_FILES['fileName']['size'], $_FILES['fileName']['tmp_name']);
                 $picture->InsertFileBDD();
                 $lastIdFile = (int)Users_has_files::getLastIdFile($db)['MAX(id)'];
                 Users_has_files::InsertIdUserAndIdFile($lastIdUser, $lastIdFile, $db);
             }
         } catch (EmailInvalidInsertionExeption $i) {
             Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
+        } catch (FormatInvalidExeption $f) {
+            $errorMessageFormatPicture = $f->getMessage();
         }
     }
 }
