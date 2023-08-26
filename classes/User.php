@@ -30,6 +30,18 @@ class User
 
     /******************************************* REQUETE INSERTION ****************************************************************/
 
+    /**
+     * Insert les detail utilisateur (form 2) Non obligatoir a l'inscription
+     *
+     * @param string|null $bio
+     * @param boolean $newsletter
+     * @param string|null $address
+     * @param string|null $locality
+     * @param string|null $zipcode
+     * @param [type] $birthday
+     * @throws  EmailInvalidInsertionExeption
+     * @return void
+     */
     public function InsertCoordannateDetails(
         string $bio = null,
         bool $newsletter = false,
@@ -40,12 +52,6 @@ class User
     ): void {
 
         try {
-            var_dump($bio);
-            var_dump($newsletter);
-            var_dump($address);
-            var_dump($locality);
-            var_dump($zipcode);
-            var_dump($this->getLastIdBDD());
 
             $lastIdUserBdd = $this->getLastIdBDD();
 
@@ -123,29 +129,38 @@ class User
 
     /******************************************* REQUETE SELECTION ****************************************************************/
 
-    private function getPictureUser(int $Files_id)
+    /**
+     * Récupere le chemin de la photo de profile
+     *
+     * @return array
+     */
+    private function getPathFilePictureProfile(): array
     {
-        $querry = 'SELECT Files_id FROM users JOIN users_has_files ON Users_id = users_has_files.Users_id JOIN files ON Files_id = users_has_files.Files_id WHERE :Files_id = Users_id';
+        $querry = 'SELECT files.path_file FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = :userid';
 
-        $r = $this->db->conn->prepare($querry);
-        $r->bindParam(':Files_id', $Files_id);
-        //test verrification
+
         try {
+            $co = $this->db->getConnect();
+            $r = $co->prepare($querry);
+            $r->bindParam(':userid', $this->id, PDO::PARAM_INT);
             $r->execute();
-            $result = $r->fetch();
-            $picture = array_column($result, 'picture_profil');
-            return $picture;
+            $pathFile = $r->fetch(PDO::FETCH_ASSOC);
+            return $pathFile;
         } catch (PDOException $e) {
             $errorMessageConnect =  $e->getMessage();
             var_dump($errorMessageConnect);
         }
     }
 
-
+    /**
+     * Récupere le dernier id de l'utilisateur pour update le deuxième formulaire
+     *
+     * @return integer
+     */
     private function getLastIdBDD(): int
     {
 
-        $querry = 'SELECT MAX(id) AS last_id FROM users';
+        $querry = 'SELECT MAX(id) FROM users';
 
         $connexion = $this->db->getConnect();
 
@@ -219,14 +234,13 @@ class User
                 'id' => $this->id,
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
-                'picture' => $this->getPictureUser($this->id),
+                'picture' => $this->getPathFilePictureProfile(),
                 'statut' => $this->statut,
                 'birthday' => $this->birthday,
                 'bio' => $this->bio,
                 'locality' => $this->locality,
                 'email' => $this->email
             ];
-            var_dump($this->getPictureUser($this->id));
 
             return $_SESSION['user'];
         }

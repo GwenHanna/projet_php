@@ -46,7 +46,7 @@ class File
         $this->error = $error;
         $this->tmpname = $tmpname;
         $this->size = $size;
-        $this->db->conn = new Db();
+        $this->db = new Db();
 
         var_dump($this->tmpname);
         var_dump($this->pathfilePicture);
@@ -80,11 +80,14 @@ class File
      */
     public function InsertFileBDD()
     {
-        $query = 'INSERT INTO files (name, format, path_file, size, datecreated) 
+        $querry = 'INSERT INTO files (name, format, path_file, size, datecreated) 
         VALUES (:name, :format, :path_file, :size, NOW())';
 
-        $conn = $this->db->conn->getdb->connect();
-        $r = $conn->conn->prepare($query);
+        // $conn = $this->db->conn->getdb->connect();
+
+        $co = $this->db->getConnect();
+        $r = $co->prepare($querry);
+
         // var_dump($r);
         $r->bindParam(':name', $this->name, PDO::PARAM_STR);
         $r->bindParam(':format', $this->format, PDO::PARAM_STR);
