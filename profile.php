@@ -33,8 +33,24 @@ if (isset($_SESSION['user'])) {
 <main>
 
 
+    <div class="col-sm-12">
+        <button class="addPublication">Publier</button>
+    </div>
+    <div class="form-publication hidden">
+        <form action="" method="post">
+            <div class="col-sm-12">
+                <textarea name="publication" id="publication" cols="30" rows="10" placeholder="Legende..."></textarea>
+            </div>
+            <div class="addFile">
+                <input type="file" name="filePublication" id="file-publication">
+            </div>
+            <input type="submit" name="registerPublication" id="register-publication">
+        </form>
+    </div>
+
 
 </main>
 <footer>
     <?php require_once './layout/footer.php' ?>
+
 </footer>
