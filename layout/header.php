@@ -20,15 +20,17 @@ $p =  './assets/';
 
 <body>
 
-    <header class="d-sm-flex justify-content-around mx-auto w-100 p-2 pb-5">
-        <div class="col-sm-1">MyComunnityLib</div>
-        <nav class="col-sm-3">
+    <header class="d-sm-flex justify-content-around align-items-center mx-auto w-100 p-2 pb-5">
+        <div class="logo col-sm-4">
+            MyCommunityLib
+        </div>
+        <nav class="d-flex justify-content-around col-sm-6">
             <?php if (isset($_SESSION['user'])) { ?>
                 <li><a href="profile.php">Mon Profile</a></li>
             <?php } ?>
             <li><a href="index.php">Home</a></li>
         </nav>
-        <nav class="btn col-sm-1">
+        <nav class="btn col-sm-2">
             <?php
             if (empty($_SESSION['user'])) { ?>
                 <a href="connexion.php">Connexion</a>
@@ -39,9 +41,5 @@ $p =  './assets/';
             ?>
 
         </nav>
-        <?php
-        if (isset($_SESSION['user'])) {
 
-            require_once './layout/header-profile.php';
-        } ?>
     </header>

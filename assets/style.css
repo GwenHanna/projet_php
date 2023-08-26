@@ -2,3 +2,10 @@ p{
     padding: 0;
     margin: 7px; 
 }
+.picture-profile{
+    width: 150px;
+}
+.picture-profile img{
+    width: 100%;
+    object-fit: cover;
+}
