@@ -11,21 +11,12 @@ require_once './classes/User.php';
 require_once './classes/Db.php';
 
 
-if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) && !empty($_POST['pass'])) {
-    $email = $_POST['email'];
-    $pass = $_POST['pass'];
-
-    try {
-        $db = new Db();
-        $u = new User($db);
-        $nuser = $u->connect($email, $pass);
-    } catch (Exception $e) {
-        $errorMessageConnect = $e->getMessage();
-    }
-}
-if (isset($_SESSION['user'])) {
-    $user = $_SESSION['user'];
-    var_dump($user);
+try {
+    $db = new Db();
+    $u = new User($db);
+    $u->connect($email, $pass);
+} catch (Exception $e) {
+    $errorMessageConnect = $e->getMessage();
 }
 
 ?>
@@ -36,17 +27,52 @@ if (isset($_SESSION['user'])) {
     <div class="col-sm-12">
         <button class="addPublication">Publier</button>
     </div>
-    <div class="form-publication hidden">
-        <form action="" method="post">
-            <div class="col-sm-12">
-                <textarea name="publication" id="publication" cols="30" rows="10" placeholder="Legende..."></textarea>
-            </div>
-            <div class="addFile">
-                <input type="file" name="filePublication" id="file-publication">
-            </div>
-            <input type="submit" name="registerPublication" id="register-publication">
-        </form>
+
+    <div class="card text-center form-publication hidden ">
+        <div class="card-header">
+
+            <form class="form-control text-center" action="" method="post">
+
+
+                <div class="card-body row">
+                    <!-- Photo -->
+                    <div class="col-6 col-md-12  form-group form-picture">
+                        <input type="button" value="Photo" name="" id="picture-publication" class="col-9 mx-auto choice">
+                        <div class="form-group actived">
+                            <label class="m-3 custom-file-upload" for="picture">Photo</label>
+                            <input value="Photo" type="file" name="picturePublication" id="picture">
+                            <div class="form-group p-2">
+                                <textarea class="col-sm-12" name="legendPicture" id="legendPicture" cols="30" rows="5" placeholder="Legende..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Link -->
+                    <div class="col-6 col-md-12 form-group form-picture">
+                        <input value="Lien" type="button" name="" id="link-publication" class="col-9 mx-auto choice">
+
+                        <div class="hidden" id="">
+                            <input type="url" name="linkPublication" id="Linkpublication" placeholder="url de votre lien" class="choice">
+                            <div class="form-group p-2">
+                                <textarea class="col-sm-12" name="legend-file" id="legend-file" cols="30" rows="5" placeholder="Legende..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <input class="btn btn-dark col-6 m-3" type="submit" name="registerPublication" id="register-publication">
+            </form>
+
+        </div>
+
     </div>
+
+
+
+
+
+
+
+
 
 
 </main>
@@ -54,3 +80,7 @@ if (isset($_SESSION['user'])) {
     <?php require_once './layout/footer.php' ?>
 
 </footer>
+
+
+
+<script src="./js/publication.js"></script>

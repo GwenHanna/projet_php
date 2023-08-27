@@ -16,3 +16,29 @@ p{
 .hidden{
     display: none;
 }
+.actived{
+    display: inherit;
+}
+
+/* FORM PUBLICATION */
+
+.form-publication textarea{
+    max-height: 100%;
+}
+
+.form{
+    position: relative;
+}
+.form::before{
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+}

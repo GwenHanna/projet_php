@@ -17,7 +17,7 @@ class Email
 {
 
     private string $email;
-
+    private $db;
 
     /**
      * Construction de l'instance Email
@@ -34,8 +34,11 @@ class Email
             throw new EmailSpamExeption(Errors::getCodes(Config::ERR_SPAM_EMAIL));
         } else {
             $this->email = $email;
+            $this->db = new Db();
         }
     }
+
+    /******************************************* FONCTIONS ****************************************************************/
 
     /**
      * Envoie une Exeption si l'email est déja présente dans la BDD
@@ -52,6 +55,14 @@ class Email
             throw new EmailAlreadyBdd(Errors::getCodes(Config::ERR_ALREADY_EMAIL));
         }
     }
+
+    private function isSpam(string $email): bool
+    {
+        $domain = explode('@', $email);
+        return in_array($domain[1], Config::SPAM_DOMAIN);
+    }
+
+    /******************************************* REQUETE SELECCTION ****************************************************************/
 
     /**
      * Récupération des emails dans la BDD
@@ -78,11 +89,8 @@ class Email
      * @param string $email
      * @return boolean
      */
-    private function isSpam(string $email): bool
-    {
-        $domain = explode('@', $email);
-        return in_array($domain[1], Config::SPAM_DOMAIN);
-    }
+
+    /******************************************* GETER ****************************************************************/
 
     /**
      * Récupère l'email de user
