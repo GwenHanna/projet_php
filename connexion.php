@@ -28,6 +28,8 @@ if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) &
             $errorMessMail = Errors::getCodes(Config::ERR_NOT_SIGN_IN);
         }
 
+        var_dump($newEmail->getEmailAndPassword());
+
         //Vérification du mot de pass
         $newPass = new Password($pass);
     } catch (EmailValidationException $e) {

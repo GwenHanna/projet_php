@@ -66,6 +66,33 @@ class Email
 
     /******************************************* REQUETE SELECCTION ****************************************************************/
 
+    // public function isVerificationConnexion() : bool {
+    //     $verif = $this->getEmailAndPassword();
+    //     $email = $verif['email'];
+    // }
+
+    /**
+     * Récupère l'eamil et le password de l'itilisateur
+     *
+     * @return array
+     */
+    public function getEmailAndPassword(): array
+    {
+        $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.id = :userId';
+
+        $c = $this->db->getConnect();
+        $r = $c->prepare($querry);
+        $r->bindParam(':userId', $this->email, PDO::PARAM_STR);
+        try {
+            $r->execute();
+            $res = $r->fetch();
+            return $res;
+        } catch (PDOException  $e) {
+            $error = $e->getMessage();
+        }
+    }
+
+
     /**
      * Récupération des emails dans la BDD
      *
