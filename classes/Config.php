@@ -21,6 +21,7 @@ class Config
     public const ERR_CONFIRMED_PASS = 7;
     public const ERR_FORMAT_PICTURE = 8;
     public const ERR_INSERT_USER = 9;
+    public const ERR_NOT_SIGN_IN = 10;
 
 
     //CONSTANTE SUCCESS

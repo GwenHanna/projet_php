@@ -39,7 +39,10 @@ if (isset($_POST['submit-register'])) {
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
         $newEmail = new Email($_POST['email']);
-        $newEmail->isEmailBDD($_POST['email']);
+
+        if ($newEmail->isEmailBDD($_POST['email']) === true) {
+            $errorMessageEmail = Errors::getCodes(Config::ERR_ALREADY_EMAIL);
+        }
         $email = $_POST['email'];
 
         //Vérification Password valid a la construction de l'instance

@@ -40,6 +40,9 @@ class Errors
             case 9:
                 $res = "Echec d'enregistrement !";
                 break;
+            case 10:
+                $res = "Vous devez vous inscrire";
+                break;
 
             default:
                 $res = 'Autre Erreur';

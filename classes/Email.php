@@ -45,14 +45,16 @@ class Email
      *
      * @throws EmailAlreadyBdd 
      * @param string $email
-     * @return void
+     * @return bool
      */
-    public function isEmailBDD(string $email): void
+    public function isEmailBDD(string $email): bool
     {
         $users = $this->getEmailBDD();
 
         if (in_array($email, $users)) {
-            throw new EmailAlreadyBdd(Errors::getCodes(Config::ERR_ALREADY_EMAIL));
+            return true;
+        } else {
+            return false;
         }
     }
 

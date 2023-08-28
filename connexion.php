@@ -4,6 +4,8 @@ require_once './classes/Errors.php';
 require_once './classes/Db.php';
 require_once './classes/Password.php';
 require_once './classes/Email.php';
+require_once './classes/Config.php';
+require_once './classes/Errors.php';
 
 
 $getErrorMessage = '';
@@ -20,16 +22,18 @@ if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) &
     $pass = $_POST['pass'];
 
     try {
+        //Vérification du mail
         $newEmail = new Email($email);
-        $newEmail->isEmailBDD($newEmail->getEmail());
+        if ($newEmail->isEmailBDD($newEmail->getEmail()) === false) {
+            $errorMessMail = Errors::getCodes(Config::ERR_NOT_SIGN_IN);
+        }
 
+        //Vérification du mot de pass
         $newPass = new Password($pass);
-    } catch (EmailAlreadyBdd $e) {
-        $errorMess = $e->getMessage();
     } catch (EmailValidationException $e) {
-        $errorMess = $e->getMessage();
+        $errorMessMail = $e->getMessage();
     } catch (EmailSpamExeption $e) {
-        $errorMess = $e->getMessage();
+        $errorMessMail = $e->getMessage();
     }
 }
 if (isset($_SESSION['user'])) {
