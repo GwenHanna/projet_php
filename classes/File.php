@@ -1,13 +1,16 @@
 <?php
 require_once './classes/Config.php';
 require_once './classes/Errors.php';
-require_once './classes/Db.php';
+require_once './init/init.php';
 
 class FormatInvalidExeption extends Exception
 {
 }
 class File
 {
+
+    //CONSTANTE
+    const DIR_TARGET_PICTURE_PROFILE = './uploads/picture_profile/';
 
     private string $file;
     private string $name;
@@ -16,12 +19,13 @@ class File
     private string $error;
     private string $size;
     private string $tmpname;
-    private $db;
+    private $dbInstance;
 
 
     /**
      * Undocumented function
      *
+     * @param  PDO $db
      * @param string $name
      * @param string $format
      * @param string $error
@@ -29,27 +33,22 @@ class File
      * 
      * @throws FormatInvalidExeption Vérifie le format pour une photo
      */
-    //CONSTANTE
-    const DIR_TARGET_PICTURE_PROFILE = './uploads/picture_profile/';
 
-
-    public function __construct(string $name, string $format, string $error, string $size, string $tmpname)
+    public function __construct(Db $dbInstance, string $name, string $format, string $error, string $size, string $tmpname)
     {
 
         if ($this->checkFormatPicture($name) === false) {
             throw new FormatInvalidExeption(Errors::getCodes(Config::ERR_FORMAT_PICTURE));
         }
 
+        $this->dbInstance = $dbInstance;
         $this->name = $name;
         $this->format = $format;
         $this->pathfilePicture = $this->getPathFilePictureProfile();
         $this->error = $error;
         $this->tmpname = $tmpname;
         $this->size = $size;
-        $this->db = new Db();
 
-        var_dump($this->tmpname);
-        var_dump($this->pathfilePicture);
         if (move_uploaded_file($this->tmpname, $this->pathfilePicture)) {
             echo 'fichier enregistré ';
         } else {
@@ -84,8 +83,7 @@ class File
         VALUES (:name, :format, :path_file, :size, NOW())';
 
 
-        $co = $this->db->getConnect();
-        $r = $co->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($querry);
 
         // var_dump($r);
         $r->bindParam(':name', $this->name, PDO::PARAM_STR);
@@ -111,7 +109,7 @@ class File
     {
         $querry = '';
 
-        $r = $this->db->getConnect()->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($querry);
 
         if ($r->execute()) {
             return $r->fetch();

@@ -1,5 +1,5 @@
 <?php
-require_once './classes/Db.php';
+require_once './init/init.php';
 require_once './classes/Config.php';
 require_once './classes/Utils.php';
 
@@ -19,11 +19,16 @@ class User
     private $birthday;
     private $locality;
     private $bio;
-    private $db;
+    private Db $dbInstance;
 
-    public function __construct(Db $db)
+    /**
+     * Undocumented function
+     *
+     * @param Db $dbInstance
+     */
+    public function __construct(Db $dbInstance)
     {
-        $this->db = $db;
+        $this->dbInstance = $dbInstance;
     }
 
 
@@ -68,7 +73,7 @@ class User
             echo "birthday: $birthday<br>";
             echo "idUser: $lastIdUserBdd<br>";
 
-            $r = $this->db->getConnect()->prepare($query);
+            $r = $this->dbInstance->getConnect()->prepare($query);
 
 
             $r->bindParam(':bio', $bio, PDO::PARAM_STR);
@@ -108,8 +113,7 @@ class User
         $passHashed = password_hash($password, PASSWORD_DEFAULT);
         try {
             $query = 'INSERT INTO users (firstname, lastname, email, passWord, dateCreated ,statut) VALUES (:firstname, :lastname, :email, :password, :datecreated, :statut)';
-            $c = $this->db->getConnect();
-            $r = $c->prepare($query);
+            $r = $this->dbInstance->getConnect()->prepare($query);
 
             $r->bindParam(':firstname', $firstname, PDO::PARAM_STR);
             $r->bindParam(':lastname', $lastname, PDO::PARAM_STR);
@@ -142,7 +146,7 @@ class User
 
 
         try {
-            $r = $this->db->getConnect()->prepare($querry);
+            $r = $this->dbInstance->getConnect()->prepare($querry);
             $r->bindParam(':userid', $this->id, PDO::PARAM_INT);
             $r->execute();
             $pathFile = $r->fetch(PDO::FETCH_ASSOC);
@@ -164,9 +168,8 @@ class User
 
         $querry = 'SELECT MAX(id) FROM users';
 
-        $connexion = $this->db->getConnect();
+        $r = $this->dbInstance->getConnect()->prepare($querry);
 
-        $r = $connexion->prepare($querry);
 
         if ($r->execute()) {
             $result = $r->fetch(PDO::FETCH_ASSOC);
@@ -186,10 +189,10 @@ class User
      */
     public function getUser(): array
     {
-        $connexion = $this->db->getConnect();
-        $recipesStatment = $connexion->prepare('SELECT * FROM `users` ');
-        $recipesStatment->execute();
-        $user = $recipesStatment->fetchAll();
+        $querry = 'SELECT * FROM `users` ';
+        $r = $this->dbInstance->getConnect()->prepare($querry);
+        $r->execute();
+        $user = $r->fetchAll();
         return $user;
     }
 
@@ -204,7 +207,7 @@ class User
      */
     public function connect(string $email, string $pass)
     {
-        $connexion = $this->db->getConnect();
+        $connexion = $this->dbInstance->getConnect();
 
         $recipesStatment = $connexion->prepare('SELECT * FROM `users` WHERE `email` = :email');
 

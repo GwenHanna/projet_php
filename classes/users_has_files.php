@@ -1,15 +1,21 @@
 <?php
-require_once './classes/Db.php';
+require_once './init/init.php';
 
 class Users_has_files
 {
+    private Db $dbInstance;
+
+    public function __construct(Db $dbInstance)
+    {
+        $this->dbInstance = $dbInstance;
+    }
 
 
-    static function InsertIdUserAndIdFile(int $idUser, int|null $idFile, $db)
+    public function InsertIdUserAndIdFile(int $idUser, int|null $idFile)
     {
         $querry = 'INSERT INTO users_has_files (Users_id, Files_id )
         VALUES (:userid, :fileid);';
-        $r = $db->getConnect()->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($querry);
 
         $r->bindParam(':userid', $idUser, PDO::PARAM_STR);
         $r->bindParam(':fileid', $idFile);

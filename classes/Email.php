@@ -1,7 +1,7 @@
 <?php
 require_once './classes/Errors.php';
 require_once './classes/Config.php';
-require_once './classes/Db.php';
+require_once './init/init.php';
 
 class EmailValidationException extends Exception
 {
@@ -17,16 +17,17 @@ class Email
 {
 
     private string $email;
-    private $db;
+    private Db $dbInstance;
 
     /**
      * Construction de l'instance Email
      *
      * @param string $email
+     * @param Db Instance de BDD
      * @throws EmailValidationException Vérification de l'email
      * @throws EmailSpamExeption Verification des spams
      */
-    public function __construct(string $email)
+    public function __construct(string $email, Db $dbIntance)
     {
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new EmailValidationException(Errors::getCodes(Config::ERR_VALIDATION_EMAIL));
@@ -34,7 +35,7 @@ class Email
             throw new EmailSpamExeption(Errors::getCodes(Config::ERR_SPAM_EMAIL));
         } else {
             $this->email = $email;
-            $this->db = new Db();
+            $this->dbInstance = $dbIntance;
         }
     }
 
@@ -83,8 +84,7 @@ class Email
     {
         $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.email = :userId';
 
-        $c = $this->db->getConnect();
-        $r = $c->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($querry);
         $r->bindParam(':userId', $this->email, PDO::PARAM_STR);
         var_dump($this->email);
         try {
@@ -105,10 +105,11 @@ class Email
      */
     private function getEmailBDD(): array
     {
-        $db = new Db();
-        $connexion = $db->getConnect();
+        // $db = new Db();
+        // $connexion = $db->getConnect();
 
-        $r = $connexion->prepare('SELECT email FROM users');
+        $querry = 'SELECT email FROM users';
+        $r = $this->dbInstance->getConnect()->prepare($querry);
         $r->execute();
 
         //Récupération de tout les Emails dans un array 1 dimmension
