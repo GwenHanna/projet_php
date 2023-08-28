@@ -13,7 +13,6 @@ require_once './classes/Password.php';
 require_once './classes/User.php';
 require_once './classes/Db.php';
 require_once './classes/File.php';
-require_once './classes/users_has_files.php';
 
 
 
@@ -23,7 +22,7 @@ if (isset($_POST['submit-register'])) {
 
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
-        $newEmail = new Email($_POST['email'], $instance);
+        $newEmail = Email::getInstance($_POST['email'], $instance);
 
         if ($newEmail->isEmailBDD($_POST['email']) === true) {
             Utils::redirect('singnin.php?error=' . Config::ERR_ALREADY_EMAIL);
@@ -37,37 +36,33 @@ if (isset($_POST['submit-register'])) {
         //Vérifier si le passwordcheck est identique au premier mot de pass
         $newPassword->isConfirmedPassword($_POST['password'], $_POST['passcheck']);
 
-
-
-        //Instance User
-        $user = new User($instance);
-
         //Insertion des id de user et id de file
         $lastname = $_POST['lastname'];
         $firstname = $_POST['firstname'];
-        var_dump($firstname);
-        var_dump($lastname);
-        var_dump($email);
+
         $user->InsertCoordannat($firstname, $lastname, $email, $pass);
 
         $lastIdUser = $db->lastInsertId();
-        var_dump($lastIdUser);
-        var_dump($db);
+
 
         //File Picture
 
         if (isset($_FILES['fileName']) && !empty($_FILES['fileName']) && $_FILES['fileName']['error'] === 0) {
-            var_dump($_FILES['fileName']);
-            $picture = new File($instance, $_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['error'], $_FILES['fileName']['size'], $_FILES['fileName']['tmp_name']);
+
+            $name = $_FILES['fileName']['name'];
+            $type = $_FILES['fileName']['type'];
+            $error = $_FILES['fileName']['error'];
+            $size = $_FILES['fileName']['size'];
+            $tmp_name = $_FILES['fileName']['tmp_name'];
+
+            $picture = new File($instance, $name, $type, $error, $size, $tmp_name);
             $picture->InsertFileBDD();
-            $lastIdFile = (int)Users_has_files::getLastIdFile($db)['MAX(id)'];
-            $file = new users_has_files($this->dbInstance);
+            $lastIdFile = (int)$file->getLastIdFile($instance)['MAX(id)'];
+            var_dump($lastIdFile);
+
             $file->InsertIdUserAndIdFile($lastIdUser, $lastIdFile);
         }
-        // Utils::redirect('singnin.php?success=' . "ok");
-
-
-
+        Utils::redirect('singnin.php?success=' . "ok");
     } catch (EmailValidationException $e) {
         Utils::redirect('singnin.php?error=' . Config::ERR_VALIDATION_EMAIL);
     } catch (EmailSpamExeption $s) {
@@ -89,7 +84,6 @@ if (isset($_POST['register_submit_two'])) {
 
     try {
 
-        $user = new User($instance);
 
         //Modification de la date en string
         $formattedBirthday = date("Y-m-d", strtotime($_POST['birthday']));
@@ -102,6 +96,7 @@ if (isset($_POST['register_submit_two'])) {
             //Update de l'utilisateur a l'inscription avec newsletter
             $user->InsertCoordannateDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
         }
+        Utils::redirect('connexion.php');
     } catch (FormatInvalidExeption $p) {
         Utils::redirect('singnin.php?error=' . Config::ERR_FORMAT_PICTURE);
     } catch (PDOException $p) {

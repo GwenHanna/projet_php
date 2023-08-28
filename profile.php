@@ -14,13 +14,6 @@ if ($_SESSION == true) {
     var_dump($_SESSION);
 }
 
-// try {
-//     $db = new Db();
-//     $u = new User($db);
-//     $u->connect($email, $pass);
-// } catch (Exception $e) {
-//     $errorMessageConnect = $e->getMessage();
-// }
 
 ?>
 

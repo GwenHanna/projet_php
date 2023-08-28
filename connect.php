@@ -1,7 +1,6 @@
 <?php
 require_once './classes/Email.php';
-require_once './classes/User.php';
-require_once './classes/Db.php';
+require_once './init/init.php';
 require_once './classes/Password.php';
 
 if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) && !empty($_POST['pass'])) {
@@ -9,29 +8,23 @@ if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) &
     $pass = $_POST['pass'];
 
     try {
-        //Vérification du mail
-        $newEmail = new Email($email);
-        if ($newEmail->isEmailBDD($newEmail->getEmail()) === false) {
+
+        $emailInstance = new Email($_POST['email'], $instance);
+        if ($emailInstance->isEmailBDD() === false) {
             $getErrorMessage = Errors::getCodes(Config::ERR_NOT_SIGN_IN);
         }
 
         //Vérification du mot de pass
         $newPass = new Password($pass);
-        $newEmail->isVerificationConnexion($pass);
+        $emailInstance->isVerificationConnexion($pass);
 
-        $db = new Db();
-        $user = new User($db);
         $user->connect($email, $pass);
-
         Utils::redirect('profile.php');
     } catch (EmailValidationException $e) {
-        //  $_GET['error'] = Config::ERR_VALIDATION_EMAIL;
         Utils::redirect('connexion.php?error=' . Config::ERR_VALIDATION_EMAIL);
     } catch (EmailSpamExeption $e) {
-        // $_GET['error'] = Config::ERR_SPAM_EMAIL;
         Utils::redirect('connexion.php?error=' . Config::ERR_SPAM_EMAIL);
     } catch (PasswordInvalidExeption $e) {
-        // $_GET['error'] = Config::ERR_VALIDATE_PASS;
         Utils::redirect('connexion.php?error=' . Config::ERR_VALIDATE_PASS);
     }
 }

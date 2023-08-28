@@ -20,6 +20,7 @@ class User
     private $locality;
     private $bio;
     private Db $dbInstance;
+    private static $userInstance = null;
 
     /**
      * Undocumented function
@@ -29,6 +30,14 @@ class User
     public function __construct(Db $dbInstance)
     {
         $this->dbInstance = $dbInstance;
+    }
+
+    static function getInstance(Db $dbInstance): User
+    {
+        if (self::$userInstance == null) {
+            return new self($dbInstance);
+        }
+        return self::$userInstance;
     }
 
 

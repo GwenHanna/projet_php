@@ -18,6 +18,7 @@ class Email
 
     private string $email;
     private Db $dbInstance;
+    private static Email|null $emailIstance = null;
 
     /**
      * Construction de l'instance Email
@@ -39,6 +40,23 @@ class Email
         }
     }
 
+    /**
+     * Undocumented function
+     *
+     * @param Email $emailIstance
+     * @param string $email
+     * @param Db $dbInstance
+     * @return Email
+     */
+    static function getInstance(string $email, Db $dbInstance): Email
+    {
+        if (self::$emailIstance === null) {
+            return new self($email, $dbInstance);
+        } else {
+            return self::$emailIstance;
+        }
+    }
+
     /******************************************* FONCTIONS ****************************************************************/
 
     /**
@@ -48,11 +66,11 @@ class Email
      * @param string $email
      * @return bool
      */
-    public function isEmailBDD(string $email): bool
+    public function isEmailBDD(): bool
     {
         $users = $this->getEmailBDD();
 
-        if (in_array($email, $users)) {
+        if (in_array($this->email, $users)) {
             return true;
         } else {
             return false;
