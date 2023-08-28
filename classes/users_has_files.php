@@ -9,7 +9,7 @@ class Users_has_files
     {
         $querry = 'INSERT INTO users_has_files (Users_id, Files_id )
         VALUES (:userid, :fileid);';
-        $r = $db->conn->prepare($querry);
+        $r = $db->getConnect()->prepare($querry);
 
         $r->bindParam(':userid', $idUser, PDO::PARAM_STR);
         $r->bindParam(':fileid', $idFile);
@@ -27,7 +27,7 @@ class Users_has_files
     {
         $querry = 'SELECT MAX(id) FROM files';
 
-        $r = $db->conn->prepare($querry);
+        $r = $db->getConnect()->prepare($querry);
         try {
             $r->execute();
             $res = $r->fetch();

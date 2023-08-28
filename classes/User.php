@@ -21,7 +21,7 @@ class User
     private $bio;
     private $db;
 
-    public function __construct($db)
+    public function __construct(Db $db)
     {
         $this->db = $db;
     }
@@ -68,7 +68,7 @@ class User
             echo "birthday: $birthday<br>";
             echo "idUser: $lastIdUserBdd<br>";
 
-            $r = $this->db->conn->prepare($query);
+            $r = $this->db->getConnect()->prepare($query);
 
 
             $r->bindParam(':bio', $bio, PDO::PARAM_STR);
@@ -107,8 +107,9 @@ class User
         $statut = 'actif';
         $passHashed = password_hash($password, PASSWORD_DEFAULT);
         try {
-            $query = 'INSERT INTO users (firstname, lastname, email, passWord, dateCreated ,statut) VALUES (:firstname, :lastname, :email, :password, :datecreated,:statut)';
-            $r = $this->db->prepare($query);
+            $query = 'INSERT INTO users (firstname, lastname, email, passWord, dateCreated ,statut) VALUES (:firstname, :lastname, :email, :password, :datecreated, :statut)';
+            $c = $this->db->getConnect();
+            $r = $c->prepare($query);
 
             $r->bindParam(':firstname', $firstname, PDO::PARAM_STR);
             $r->bindParam(':lastname', $lastname, PDO::PARAM_STR);
@@ -117,14 +118,15 @@ class User
             $r->bindParam(':datecreated', $newDate);
             $r->bindParam(':statut', $statut);
 
-            $r->execute();
+            if ($r->execute()) {
+                echo 'ok';
+            } else {
+                echo 'not ok';
+            }
         } catch (PDOException $e) {
-            print_r($r->errorInfo());
             throw new EmailInvalidInsertionExeption(Errors::getCodes(Config::ERR_INSERT_USER));
         }
     }
-
-
 
 
     /******************************************* REQUETE SELECTION ****************************************************************/
@@ -134,17 +136,17 @@ class User
      *
      * @return array
      */
-    private function getPathFilePictureProfile(): array
+    private function getPathFilePictureProfile(): string
     {
         $querry = 'SELECT files.path_file FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = :userid';
 
 
         try {
-            $co = $this->db->getConnect();
-            $r = $co->prepare($querry);
+            $r = $this->db->getConnect()->prepare($querry);
             $r->bindParam(':userid', $this->id, PDO::PARAM_INT);
             $r->execute();
             $pathFile = $r->fetch(PDO::FETCH_ASSOC);
+            var_dump($pathFile);
             return $pathFile;
         } catch (PDOException $e) {
             $errorMessageConnect =  $e->getMessage();
@@ -167,8 +169,9 @@ class User
         $r = $connexion->prepare($querry);
 
         if ($r->execute()) {
-            $result = $r->fetch();
-            $lastId = (int)$result['last_id'];
+            $result = $r->fetch(PDO::FETCH_ASSOC);
+            var_dump($result);
+            $lastId = (int)$result['MAX(id)'];
             return $lastId;
         } else {
             var_dump('Erreur de co');
@@ -216,6 +219,7 @@ class User
         } else if (!password_verify($pass, $user['passWord'])) {
             Utils::redirect('connexion.php?error=' . Config::ERR_CONNECT_PASS);
         } else {
+            session_start();
             echo "Vous êtes connecter";
 
 

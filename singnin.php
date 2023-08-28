@@ -1,16 +1,11 @@
 <?php
 require_once './layout/header.php';
-require_once './classes/Email.php';
 require_once './classes/Errors.php';
 require_once './classes/Config.php';
 require_once './classes/Utils.php';
-require_once './classes/Password.php';
-require_once './classes/File.php';
-require_once './classes/Db.php';
-require_once './classes/User.php';
 require_once './classes/Address.php';
-require_once './classes/users_has_files.php';
 
+$pagination = 1;
 
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
@@ -18,95 +13,40 @@ if (isset($_SESSION['user'])) {
 
 //Verification des erreur URL
 if ((isset($_GET['error']))) {
-    $errorMessageFormatPicture =  Errors::getCodes($_GET['error']);
+    $pagination = 1;
+
+    $codeError = intval($_GET['error']);
+
+    if ($codeError >= 1 && $codeError <= 50) {
+        $errorMessageEmail = Errors::getCodes($codeError);
+    } elseif ($codeError >= 51 && $codeError <= 100) {
+        $errorMessagePass = Errors::getCodes($_GET['error']);
+    }
 }
+
+
+
+if ((!isset($_GET['error'])) && isset($_POST['submit-register'])) {
+    $pagination = 2;
+}
+
+if (isset($_GET['success']) && !isset($_GET['error'])) {
+    $pagination = 2;
+}
+
 
 //Récupération des villes de france
 $newAddress = new Address();
 $city = $newAddress->getCity();
 $zipcode = $newAddress->getZipcode();
 
-//Init pagination
-$_SESSION['pagination-form-sign-in'] = 1;
 
-if (isset($_POST['submit-register'])) {
-
-
-
-    try {
-        $lastname = $_POST['lastname'];
-        $firstname = $_POST['firstname'];
-
-        //Vérification de la validation Email et vérif Spam a la construction de l'instance
-        $newEmail = new Email($_POST['email']);
-
-        if ($newEmail->isEmailBDD($_POST['email']) === true) {
-            $errorMessageEmail = Errors::getCodes(Config::ERR_ALREADY_EMAIL);
-        }
-        $email = $_POST['email'];
-
-        //Vérification Password valid a la construction de l'instance
-        $newPassword = new Password($_POST['password']);
-        $pass = $_POST['password'];
-
-
-        //Vérifier si le passwordcheck est identique au premier mot de pass
-        $newPassword->isConfirmedPassword($_POST['password'], $_POST['passcheck']);
-
-        //Connection a la base de donnée
-        $db = new Db();
-        $connexion = $db->getConnect();
-
-
-        //Nouvelle instance de User
-        $user = new User($connexion);
-
-        //PHOT DE PROFIL
-
-
-        //Pagination form 2
-        $_SESSION['pagination-form-sign-in'] = 2;
-    } catch (EmailValidationException $e) {
-        $errorMessageEmail = $e->getMessage();
-    } catch (EmailSpamExeption $s) {
-        $errorMessageEmail = $s->getMessage();
-    } catch (EmailAlreadyBdd $b) {
-        $errorMessageEmail = $b->getMessage();
-    } catch (PasswordInvalidExeption $p) {
-        $errorMessagePassword = $p->getMessage();
-    } catch (PasswordIsNotConfirmedExeption $c) {
-        $errorMessagePasswordCheck = $c->getMessage();
-    };
-
-    if (isset($user) && isset($_POST['submit-register'])) {
-
-        try {
-            //Insertion des id de user et id de file
-            $user->InsertCoordannat($firstname, $lastname, $email, $pass);
-
-            //Insertion valeur user form coordonnée sEnregistre l'id du nouvel utilisateur
-            $lastIdUser = $db->conn->lastInsertId();
-
-            if (isset($_FILES['fileName']) && !empty($_FILES['fileName']) && $_FILES['fileName']['error'] === 0) {
-                var_dump($_FILES['fileName']);
-                $picture = new File($_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['error'], $_FILES['fileName']['size'], $_FILES['fileName']['tmp_name']);
-                $picture->InsertFileBDD();
-                $lastIdFile = (int)Users_has_files::getLastIdFile($db)['MAX(id)'];
-                Users_has_files::InsertIdUserAndIdFile($lastIdUser, $lastIdFile, $db);
-            }
-        } catch (EmailInvalidInsertionExeption $i) {
-            Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
-        } catch (FormatInvalidExeption $f) {
-            $errorMessageFormatPicture = $f->getMessage();
-        }
-    }
-}
 
 ?>
 
-<?php if ($_SESSION['pagination-form-sign-in'] == 1 && !isset($_GET['error'])) { ?>
+<?php if ($pagination == 1) { ?>
 
-    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="" enctype="multipart/form-data">
+    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
         <fieldset class="">
             <legend>Coordonée</legend>
             <!-- NAME -->
@@ -130,6 +70,7 @@ if (isset($_POST['submit-register'])) {
             <!-- PICTURE -->
             <div class="form-group d-sm-flex picture">
                 <p class="col-sm-6">
+                    <label class="custom-file-upload" for="fileUser">Téléchargement Photo</label>
                     <input type="file" name="fileName" id="fileUser">
                     <?php if (isset($errorMessageFormatPicture)) { ?>
                         <span class="error"><?php echo $errorMessageFormatPicture ?></span>
@@ -140,9 +81,9 @@ if (isset($_POST['submit-register'])) {
             <div class="form-group d-sm-flex pass-word">
                 <p class="col-sm-12">
                     <input class="form-control" type="text" name="password" id="passwordUser" placeholder="Mot de passe" required>
-                    <?php if (isset($errorMessagePassword)) { ?>
+                    <?php if (isset($errorMessagePass)) { ?>
                         <span class="error">
-                            <?php echo $errorMessagePassword ?>
+                            <?php echo $errorMessagePass ?>
                         </span>
                     <?php } ?>
                 </p>
@@ -163,7 +104,7 @@ if (isset($_POST['submit-register'])) {
         </fieldset>
     </form>
 
-<?php } elseif ($_SESSION['pagination-form-sign-in'] === 2 || isset($_GET['error'])) { ?>
+<?php } elseif ($pagination === 2 && !isset($_GET['error'])) { ?>
     <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php">
         <fieldset class="p-4">
             <legend>Complément d'informations </legend>

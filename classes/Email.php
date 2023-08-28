@@ -66,26 +66,31 @@ class Email
 
     /******************************************* REQUETE SELECCTION ****************************************************************/
 
-    // public function isVerificationConnexion() : bool {
-    //     $verif = $this->getEmailAndPassword();
-    //     $email = $verif['email'];
-    // }
+    public function isVerificationConnexion(string $pass): bool
+    {
+        $verif = $this->getEmailAndPassword();
+        $passwordHashed = $verif['passWord'];
+
+        return password_verify($pass, $passwordHashed);
+    }
 
     /**
      * Récupère l'eamil et le password de l'itilisateur
      *
-     * @return array
+     *@return  array
      */
-    public function getEmailAndPassword(): array
+    private function getEmailAndPassword(): array
     {
-        $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.id = :userId';
+        $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.email = :userId';
 
         $c = $this->db->getConnect();
         $r = $c->prepare($querry);
         $r->bindParam(':userId', $this->email, PDO::PARAM_STR);
+        var_dump($this->email);
         try {
             $r->execute();
-            $res = $r->fetch();
+            $res = $r->fetch(PDO::FETCH_ASSOC);
+            var_dump($res);
             return $res;
         } catch (PDOException  $e) {
             $error = $e->getMessage();

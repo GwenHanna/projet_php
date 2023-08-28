@@ -5,38 +5,105 @@ if (isset($errorMessageConnect)) {
 
 require_once './classes/Config.php';
 require_once './classes/Utils.php';
+require_once './classes/Email.php';
+require_once './classes/Password.php';
 require_once './classes/User.php';
 require_once './classes/Db.php';
 require_once './classes/File.php';
+require_once './classes/users_has_files.php';
 
 
-// var_dump($_FILES['fileName']);
-
-if (isset($_POST['register_submit_two'])) {
-    $db = new Db();
-    $connexion = $db->getConnect();
+if (isset($_POST['submit-register'])) {
     try {
 
 
 
-        //Cone=nexion BDD
+        //Vérification de la validation Email et vérif Spam a la construction de l'instance
+        $newEmail = new Email($_POST['email']);
+        if ($newEmail->isEmailBDD($_POST['email']) === true) {
+            Utils::redirect('singnin.php?error=' . Config::ERR_ALREADY_EMAIL);
+        }
+        $email = $_POST['email'];
 
+        //Vérification Password valid a la construction de l'instance
+        $newPassword = new Password($_POST['password']);
+        $pass = $_POST['password'];
 
+        //Vérifier si le passwordcheck est identique au premier mot de pass
+        $newPassword->isConfirmedPassword($_POST['password'], $_POST['passcheck']);
+
+        //Connection a la base de donnée
+        $db = new Db();
+
+        //Instance User
         $user = new User($db);
 
-        if (isset($_POST['register_submit_two'])) {
+        //Insertion des id de user et id de file
+        $lastname = $_POST['lastname'];
+        $firstname = $_POST['firstname'];
+        var_dump($firstname);
+        var_dump($lastname);
+        var_dump($email);
+        $user->InsertCoordannat($firstname, $lastname, $email, $pass);
 
-            //Modification de la date en string
-            $formattedBirthday = date("Y-m-d", strtotime($_POST['birthday']));
+        $lastIdUser = $db->getConnect()->lastInsertId();
+        var_dump($lastIdUser);
 
-            //Update de l'utilisateur a l'inscription sans newsletter
-            if (!isset($_POST['newsletter']) && isset($_POST['bio'])) {
-                $user->InsertCoordannateDetails($_POST['bio']);
-            } else {
-                $newsletterOk = true;
-                //Update de l'utilisateur a l'inscription avec newsletter
-                $user->InsertCoordannateDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
-            }
+        //File Picture
+
+        if (isset($_FILES['fileName']) && !empty($_FILES['fileName']) && $_FILES['fileName']['error'] === 0) {
+            var_dump($_FILES['fileName']);
+            $picture = new File($_FILES['fileName']['name'], $_FILES['fileName']['type'], $_FILES['fileName']['error'], $_FILES['fileName']['size'], $_FILES['fileName']['tmp_name']);
+            $picture->InsertFileBDD();
+            $lastIdFile = (int)Users_has_files::getLastIdFile($db)['MAX(id)'];
+            Users_has_files::InsertIdUserAndIdFile($lastIdUser, $lastIdFile, $db);
+        }
+        // Utils::redirect('singnin.php?success=' . "ok");
+
+        //Nouvelle instance de User
+
+    } catch (EmailValidationException $e) {
+        Utils::redirect('singnin.php?error=' . Config::ERR_VALIDATION_EMAIL);
+        // $errorMessageEmail = $e->getMessage();
+    } catch (EmailSpamExeption $s) {
+        // $errorMessageEmail = $s->getMessage();
+        Utils::redirect('singnin.php?error=' . Config::ERR_SPAM_EMAIL);
+    } catch (EmailAlreadyBdd $b) {
+        // $errorMessageEmail = $b->getMessage();
+        Utils::redirect('singnin.php?error=' . Config::ERR_ALREADY_EMAIL);
+    } catch (PasswordInvalidExeption $p) {
+        $errorMessagePassword = $p->getMessage();
+    } catch (PasswordIsNotConfirmedExeption $c) {
+        // $errorMessagePasswordCheck = $c->getMessage();
+        Utils::redirect('singnin.php?error=' . Config::ERR_CONFIRMED_PASS);
+    } catch (EmailInvalidInsertionExeption $i) {
+        Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
+    } catch (FormatInvalidExeption $f) {
+        Utils::redirect('singnin.php?error=' . Config::ERR_FORMAT_PICTURE);
+    };
+}
+
+if (isset($_POST['register_submit_two'])) {
+
+    try {
+
+        $db = new Db();
+        $user = new User($db);
+
+
+
+
+
+        //Modification de la date en string
+        $formattedBirthday = date("Y-m-d", strtotime($_POST['birthday']));
+
+        //Update de l'utilisateur a l'inscription sans newsletter
+        if (!isset($_POST['newsletter']) && isset($_POST['bio'])) {
+            $user->InsertCoordannateDetails($_POST['bio']);
+        } else {
+            $newsletterOk = true;
+            //Update de l'utilisateur a l'inscription avec newsletter
+            $user->InsertCoordannateDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
         }
     } catch (FormatInvalidExeption $p) {
         Utils::redirect('singnin.php?error=' . Config::ERR_FORMAT_PICTURE);

@@ -83,7 +83,6 @@ class File
         $querry = 'INSERT INTO files (name, format, path_file, size, datecreated) 
         VALUES (:name, :format, :path_file, :size, NOW())';
 
-        // $conn = $this->db->conn->getdb->connect();
 
         $co = $this->db->getConnect();
         $r = $co->prepare($querry);
@@ -112,7 +111,7 @@ class File
     {
         $querry = '';
 
-        $r = $this->db->conn->prepare($querry);
+        $r = $this->db->getConnect()->prepare($querry);
 
         if ($r->execute()) {
             return $r->fetch();
