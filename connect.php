@@ -19,7 +19,7 @@ if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) &
         $emailInstance->isVerificationConnexion($pass);
 
         $user->connect($email, $pass);
-        Utils::redirect('profile.php');
+        Utils::redirect('connexion.php');
     } catch (EmailValidationException $e) {
         Utils::redirect('connexion.php?error=' . Config::ERR_VALIDATION_EMAIL);
     } catch (EmailSpamExeption $e) {
