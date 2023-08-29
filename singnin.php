@@ -5,7 +5,6 @@ require_once './classes/Config.php';
 require_once './classes/Utils.php';
 require_once './classes/Address.php';
 
-$pagination = 1;
 
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
@@ -13,55 +12,57 @@ if (isset($_SESSION['user'])) {
 
 //Verification des erreur URL
 if ((isset($_GET['error']))) {
-    $pagination = 1;
+    // $pagination = 1;
 
     $codeError = intval($_GET['error']);
 
     if ($codeError >= 1 && $codeError <= 50) {
         $errorMessageEmail = Errors::getCodes($codeError);
     } elseif ($codeError >= 51 && $codeError <= 100) {
-        $errorMessagePass = Errors::getCodes($_GET['error']);
+        if ($codeError === 53) {
+            $errorMessagePasswordCheck = Errors::getCodes($codeError);
+        }
+        $errorMessagePass = Errors::getCodes($codeError);
+    } elseif ($codeError === 101) {
+        $errorMessageFormatPicture = Errors::getCodes($codeError);
     }
 }
 
 
+// if ((!isset($codeError)) && isset($_POST['submit-register'])) {
+//     $pagination = 2;
+// }
 
-if ((!isset($_GET['error'])) && isset($_POST['submit-register'])) {
-    $pagination = 2;
-}
-
-if (isset($_GET['success']) && !isset($_GET['error'])) {
-    $pagination = 2;
-}
+// if (isset($_GET['success']) && !isset($codeError)) {
+//     $pagination = 2;
+// }
 
 
 //Récupération des villes de france
 $newAddress = new Address();
-$city = $newAddress->getCity();
-$zipcode = $newAddress->getZipcode();
-
-
+$citys = $newAddress->getCitys();
+$zipcodes = $newAddress->getZipcodes();
 
 ?>
 
-<?php if ($pagination == 1) { ?>
+<?php if (!isset($_SESSION['pagination'])) { ?>
 
     <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
         <fieldset class="">
-            <legend>Coordonée</legend>
+            <legend>Coordonées</legend>
             <!-- NAME -->
             <div class="form-group d-sm-flex name">
                 <p class="col-sm-6">
-                    <input <?php if (isset($firstname)) { ?> value="<?php echo $firstname ?>" <?php } ?> class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
+                    <input value="" class="form-control" type="text" name="firstname" id="firstNameUser" placeholder="Prénom" required>
                 </p>
                 <p class="col-sm-6">
-                    <input <?php if (isset($lastname)) { ?> value="<?php echo $lastname ?>" <?php } ?> class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
+                    <input value="" class="form-control" type="text" name="lastname" id="lastNameUser" placeholder="Nom" required>
                 </p>
             </div>
             <!-- EMAIL -->
             <div class="form-group d-sm-flex email">
                 <p class="col-sm-12">
-                    <input <?php if (isset($email)) { ?> value="<?php echo $email ?>" <?php } ?> class="form-control" type="text" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
+                    <input value="" class="form-control" type="email" name="email" id="emailUser" placeholder="Email : toto@gmail.fr" required>
                     <?php if (isset($errorMessageEmail)) { ?>
                         <span class="error"><?php echo $errorMessageEmail ?></span>
                     <?php } ?>
@@ -88,7 +89,7 @@ $zipcode = $newAddress->getZipcode();
                     <?php } ?>
                 </p>
             </div>
-            <!-- NEWS LETTER CHECKBOX -->
+            <!-- PASS WORD CHECK -->
             <div class="form-group d-sm-flex pass-check">
                 <p class="col-sm-12">
                     <input class="form-control" type="text" name="passcheck" id="passchecklUser" placeholder="Confirmation mot de passe" required>
@@ -104,7 +105,7 @@ $zipcode = $newAddress->getZipcode();
         </fieldset>
     </form>
 
-<?php } elseif ($pagination === 2 && !isset($_GET['error'])) { ?>
+<?php } elseif (isset($_SESSION['pagination'])) { ?>
     <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php">
         <fieldset class="p-4">
             <legend>Complément d'informations </legend>
@@ -133,12 +134,12 @@ $zipcode = $newAddress->getZipcode();
                 </p>
                 <div class="form-group d-sm-flex justify-content-aroud align-items-end">
 
-                    <!-- CITY -->
-                    <?php if (count($city) > 0) { ?>
-                        <p class="col-6 city">
+                    <!-- CITYs -->
+                    <?php if (count($citys) > 0) { ?>
+                        <p class="col-6 citys">
                             <label for="localityUser">Ville</label>
                             <select class="col-12" name="locality" id="localityUser">
-                                <?php foreach ($city as $c) { ?>
+                                <?php foreach ($citys as $c) { ?>
                                     <option value="<?php echo $c ?>"><?php echo $c ?></option>
                                 <?php } ?>
                             </select>
@@ -146,12 +147,12 @@ $zipcode = $newAddress->getZipcode();
                     <?php } ?>
 
                     <!-- ZIP CODE -->
-                    <?php if (count($zipcode) > 0) { ?>
-                        <p class="col-6 zipcode">
-                            <label for="zipcode">Code postal</label>
+                    <?php if (count($zipcodes) > 0) { ?>
+                        <p class="col-6 zipcodes">
+                            <label for="zipcodes">Code postal</label>
 
-                            <select class="col-12" name="zipcode" id="zipcodeUser">
-                                <?php foreach ($zipcode as $z) { ?>
+                            <select class="col-12" name="zipcodes" id="zipcodesUser">
+                                <?php foreach ($zipcodes as $z) { ?>
                                     <option value="<?php echo $z ?>"><?php echo $z ?></option>
                                 <?php } ?>
                             </select>

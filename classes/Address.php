@@ -19,7 +19,7 @@ class Address
      *
      * @return array
      */
-    public function getZipcode(): array
+    public function getZipcodes(): array
     {
 
         try {
@@ -40,7 +40,7 @@ class Address
      *
      * @return array
      */
-    public function getCity(): array
+    public function getCitys(): array
     {
         // $db = new DbVille();
         try {

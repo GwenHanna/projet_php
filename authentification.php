@@ -19,8 +19,6 @@ require_once './classes/File.php';
 if (isset($_POST['submit-register'])) {
     try {
 
-
-
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
         $newEmail = Email::getInstance($_POST['email'], $instance);
 
@@ -44,7 +42,7 @@ if (isset($_POST['submit-register'])) {
 
         $lastIdUser = $db->lastInsertId();
 
-
+        $_SESSION['pagination'] = 2;
         //File Picture
 
         if (isset($_FILES['fileName']) && !empty($_FILES['fileName']) && $_FILES['fileName']['error'] === 0) {
@@ -62,7 +60,7 @@ if (isset($_POST['submit-register'])) {
 
             $file->InsertIdUserAndIdFile($lastIdUser, $lastIdFile);
         }
-        Utils::redirect('singnin.php?success=' . "ok");
+        Utils::redirect('singnin.php?success=ok');
     } catch (EmailValidationException $e) {
         Utils::redirect('singnin.php?error=' . Config::ERR_VALIDATION_EMAIL);
     } catch (EmailSpamExeption $s) {
