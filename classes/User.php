@@ -47,7 +47,7 @@ class User
      * @throws  EmailInvalidInsertionExeption
      * @return void
      */
-    public function InsertCoordannateDetails(
+    public function insertContactDetails(
         string $bio = null,
         bool $newsletter = false,
         string $address = null,
@@ -64,25 +64,16 @@ class User
                 SET bio = :bio, newsletter = :newsletter, address = :address, locality = :locality, zipcode = :zipcode, birthday = :birthday
                 WHERE id = :idUser';
 
-            echo "Values to insert:<br>";
-            echo "bio: $bio<br>";
-            echo "newsletter: $newsletter<br>";
-            echo "address: $address<br>";
-            echo "locality: $locality<br>";
-            echo "zipcode: $zipcode<br>";
-            echo "birthday: $birthday<br>";
-            echo "idUser: $lastIdUserBdd<br>";
-
             $r = $this->dbInstance->getConnect()->prepare($query);
 
 
-            $r->bindParam(':bio', $bio, PDO::PARAM_STR);
-            $r->bindParam(':newsletter', $newsletter, PDO::PARAM_BOOL);
-            $r->bindParam(':address', $address, PDO::PARAM_STR);
-            $r->bindParam(':locality', $locality, PDO::PARAM_STR);
-            $r->bindParam(':zipcode', $zipcode, PDO::PARAM_STR);
-            $r->bindParam(':birthday', $birthday, PDO::PARAM_STR);
-            $r->bindParam(':idUser', $lastIdUserBdd, PDO::PARAM_INT);
+            $r->bindValue(':bio', $bio, PDO::PARAM_STR);
+            $r->bindValue(':newsletter', $newsletter, PDO::PARAM_BOOL);
+            $r->bindValue(':address', $address, PDO::PARAM_STR);
+            $r->bindValue(':locality', $locality, PDO::PARAM_STR);
+            $r->bindValue(':zipcode', $zipcode, PDO::PARAM_STR);
+            $r->bindValue(':birthday', $birthday, PDO::PARAM_STR);
+            $r->bindValue(':idUser', $lastIdUserBdd, PDO::PARAM_INT);
 
 
             $r->execute();
@@ -237,18 +228,19 @@ class User
             $this->locality = $user['locality'];
             $this->bio = $user['bio'];
 
-            $_SESSION['user'] = [
+            //Récupération du chemin de la photo de profile
+            $pathFilePictureProfile = $this->getPathFilePictureProfile();
+            [
                 'id' => $this->id,
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
-                'picture' => $this->getPathFilePictureProfile(),
+                'picture' => $pathFilePictureProfile,
                 'statut' => $this->statut,
                 'birthday' => $this->birthday,
                 'bio' => $this->bio,
                 'locality' => $this->locality,
                 'email' => $this->email
-            ];
-
+            ] = $_SESSION['user'];
             return $_SESSION['user'];
         }
     }

@@ -20,9 +20,9 @@ if (isset($_POST['submit-register'])) {
     try {
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
+        $email = $_POST['email'];
         new Email($email, $instance);
 
-        $email = $_POST['email'];
 
         //Vérification Password valid a la construction de l'instance
         $newPassword = new Password($_POST['password']);
@@ -92,11 +92,11 @@ if (isset($_POST['register_submit_two'])) {
 
         //Update de l'utilisateur a l'inscription sans newsletter
         if (!isset($_POST['newsletter']) && isset($_POST['bio'])) {
-            $user->InsertCoordannateDetails($_POST['bio']);
+            $user->insertContactDetails($_POST['bio']);
         } else {
             $newsletterOk = true;
             //Update de l'utilisateur a l'inscription avec newsletter
-            $user->InsertCoordannateDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
+            $user->insertContactDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
         }
         Utils::redirect('connexion.php');
     } catch (FormatInvalidExeption $p) {

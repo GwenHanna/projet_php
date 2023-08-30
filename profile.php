@@ -3,20 +3,22 @@
     require_once './layout/header.php';
     require_once './layout/header-profile.php';
     ?>
-
 </header>
-<?php
 
+<?php
 require_once './classes/User.php';
 require_once './classes/Db.php';
+require_once './classes/Utils.php';
 
-if ($_SESSION == true) {
-    var_dump($_SESSION);
+if (!isset($_SESSION['user'])) {
+    Utils::redirect('index.php');
 }
-
-
+var_dump($_SESSION['user']);
 ?>
 
+
+<?php
+?>
 <main>
 
 
