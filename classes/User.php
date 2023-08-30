@@ -66,7 +66,6 @@ class User
 
             $r = $this->dbInstance->getConnect()->prepare($query);
 
-
             $r->bindValue(':bio', $bio, PDO::PARAM_STR);
             $r->bindValue(':newsletter', $newsletter, PDO::PARAM_BOOL);
             $r->bindValue(':address', $address, PDO::PARAM_STR);
@@ -74,7 +73,6 @@ class User
             $r->bindValue(':zipcode', $zipcode, PDO::PARAM_STR);
             $r->bindValue(':birthday', $birthday, PDO::PARAM_STR);
             $r->bindValue(':idUser', $lastIdUserBdd, PDO::PARAM_INT);
-
 
             $r->execute();
         } catch (PDOException $th) {
@@ -93,7 +91,7 @@ class User
      * @throws EmailInvalidInsertionExeption Exeption en cas d'erreur a l'insertion des données utilisateur
      * @return void
      */
-    public function InsertCoordannat(
+    public function insertContact(
         string $firstname,
         string $lastname,
         string $email,
@@ -106,18 +104,14 @@ class User
             $query = 'INSERT INTO users (firstname, lastname, email, passWord, dateCreated ,statut) VALUES (:firstname, :lastname, :email, :password, :datecreated, :statut)';
             $r = $this->dbInstance->getConnect()->prepare($query);
 
-            $r->bindParam(':firstname', $firstname, PDO::PARAM_STR);
-            $r->bindParam(':lastname', $lastname, PDO::PARAM_STR);
-            $r->bindParam(':email', $email, PDO::PARAM_STR);
-            $r->bindParam(':password', $passHashed, PDO::PARAM_STR);
-            $r->bindParam(':datecreated', $newDate);
-            $r->bindParam(':statut', $statut);
+            $r->bindValue(':firstname', $firstname, PDO::PARAM_STR);
+            $r->bindValue(':lastname', $lastname, PDO::PARAM_STR);
+            $r->bindValue(':email', $email, PDO::PARAM_STR);
+            $r->bindValue(':password', $passHashed, PDO::PARAM_STR);
+            $r->bindValue(':datecreated', $newDate);
+            $r->bindValue(':statut', $statut);
 
-            if ($r->execute()) {
-                echo 'ok';
-            } else {
-                echo 'not ok';
-            }
+            $r->execute();
         } catch (PDOException $e) {
             throw new EmailInvalidInsertionExeption(Errors::getCodes(Config::ERR_INSERT_USER));
         }

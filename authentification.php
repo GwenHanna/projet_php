@@ -37,7 +37,7 @@ if (isset($_POST['submit-register'])) {
 
         $user = new User($instance);
 
-        $user->InsertCoordannat($firstname, $lastname, $email, $pass);
+        $user->insertContact($firstname, $lastname, $email, $pass);
 
         $lastIdUser = $instance->getConnect()->lastInsertId();
 
