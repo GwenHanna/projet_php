@@ -29,7 +29,7 @@ if (isset($_POST['submit-register'])) {
         $pass = $_POST['password'];
 
         //Vérifier si le passwordcheck est identique au premier mot de pass
-        $newPassword->isConfirmedPassword($_POST['password'], $_POST['passcheck']);
+        $newPassword->isPasswordConfirmed($_POST['password'], $_POST['passcheck']);
 
         //Insertion des id de user et id de file
         $lastname = $_POST['lastname'];
@@ -52,7 +52,7 @@ if (isset($_POST['submit-register'])) {
             $tmp_name = $_FILES['fileName']['tmp_name'];
 
             $picture = new File($instance, $name, $type, $error, $size, $tmp_name);
-            $picture->InsertFileBDD();
+            $picture->InsertFileDb();
             $file = new Users_has_files($instance);
             $lastIdFile = (int)$file->getLastIdFile($instance)['MAX(id)'];
 

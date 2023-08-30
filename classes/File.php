@@ -37,7 +37,7 @@ class File
     public function __construct(Db $dbInstance, string $name, string $format, string $error, string $size, string $tmpname)
     {
 
-        if ($this->checkFormatPicture($name) === false) {
+        if ($this->isFormatPictureConfirmed($name) === false) {
             throw new FormatInvalidExeption(Errors::getCodes(Config::ERR_FORMAT_PICTURE));
         }
 
@@ -77,7 +77,7 @@ class File
      *
      * @return void
      */
-    public function InsertFileBDD()
+    public function InsertFileDb()
     {
         $querry = 'INSERT INTO files (name, format, path_file, size, datecreated) 
         VALUES (:name, :format, :path_file, :size, NOW())';
@@ -86,10 +86,10 @@ class File
         $r = $this->dbInstance->getConnect()->prepare($querry);
 
         // var_dump($r);
-        $r->bindParam(':name', $this->name, PDO::PARAM_STR);
-        $r->bindParam(':format', $this->format, PDO::PARAM_STR);
-        $r->bindParam(':path_file', $this->pathfilePicture, PDO::PARAM_STR);
-        $r->bindParam(':size', $this->size, PDO::PARAM_STR);
+        $r->bindValue(':name', $this->name, PDO::PARAM_STR);
+        $r->bindValue(':format', $this->format, PDO::PARAM_STR);
+        $r->bindValue(':path_file', $this->pathfilePicture, PDO::PARAM_STR);
+        $r->bindValue(':size', $this->size, PDO::PARAM_STR);
 
         //test verrification
         try {
@@ -105,7 +105,7 @@ class File
      * @throws  PDOExeption Si erreur de recuperation du chemin du fichier
      * @return string
      */
-    public function getPathFile(): string
+    public function getFilePath(): string
     {
         $querry = '';
 
@@ -127,7 +127,7 @@ class File
      * @param string $name
      * @return boolean
      */
-    public function checkFormatPicture(string $name): bool
+    public function isFormatPictureConfirmed(string $name): bool
     {
         $format = explode('.', $name);
         echo $format[1];

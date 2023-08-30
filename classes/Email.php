@@ -35,7 +35,7 @@ class Email
             throw new EmailValidationException(Errors::getCodes(Config::ERR_VALIDATION_EMAIL));
         } elseif ($this->isSpam($email) === true) {
             throw new EmailSpamExeption(Errors::getCodes(Config::ERR_SPAM_EMAIL));
-        } elseif ($this->isEmailBDD($email) === true) {
+        } elseif ($this->isEmailDb($email) === true) {
             throw new EmailAlreadyBdd(Errors::getCodes(Config::ERR_ALREADY_EMAIL));
         } else {
             $this->email = $email;
@@ -52,9 +52,9 @@ class Email
      * @param string $email
      * @return bool
      */
-    private function isEmailBDD($email): bool
+    private function isEmailDb($email): bool
     {
-        $emails = $this->getEmailBDD();
+        $emails = $this->getEmailsDb();
         return in_array($email, $emails);
     }
 
@@ -66,10 +66,10 @@ class Email
 
     /******************************************* REQUETE SELECCTION ****************************************************************/
 
-    public function isVerificationConnexion(string $pass): bool
+    public function isConfirmedConnection(string $pass): bool
     {
-        $verif = $this->getEmailAndPassword();
-        $passwordHashed = $verif['passWord'];
+        $EmailAndPass = $this->getEmailAndPassword();
+        $passwordHashed = $EmailAndPass['passWord'];
 
         return password_verify($pass, $passwordHashed);
     }
@@ -84,7 +84,7 @@ class Email
         $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.email = :userEmail';
 
         $r = $this->dbInstance->getConnect()->prepare($querry);
-        $r->bindParam(':userEmail', $this->email, PDO::PARAM_STR);
+        $r->bindValue(':userEmail', $this->email, PDO::PARAM_STR);
         try {
             $r->execute();
             $res = $r->fetch(PDO::FETCH_ASSOC);
@@ -94,16 +94,13 @@ class Email
         }
     }
 
-
     /**
      * Récupération des emails dans la BDD
      *
      * @return array
      */
-    private function getEmailBDD(): array
+    private function getEmailsDb(): array
     {
-        // $db = new Db();
-        // $connexion = $db->getConnect();
 
         $querry = 'SELECT email FROM users';
         $r = $this->dbInstance->getConnect()->prepare($querry);

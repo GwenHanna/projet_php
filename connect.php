@@ -13,7 +13,7 @@ if (isset($_POST['connect'])) {
 
         //Vérification du mot de pass
         $newPass = new Password($pass);
-        $emailInstance->isVerificationConnexion($pass);
+        $emailInstance->isConfirmedConnection($pass);
 
         $user = new User($instance);
         $user->connect($email, $pass);

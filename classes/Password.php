@@ -46,7 +46,7 @@ class Password
      * @param string $passwordCheck
      * @throws PasswordIsNotConfirmedExeption
      */
-    public function isConfirmedPassword(string $password, string $passwordCheck): void
+    public function isPasswordConfirmed(string $password, string $passwordCheck): void
     {
         if ($password !== $passwordCheck) {
             throw new PasswordIsNotConfirmedExeption(Errors::getCodes(Config::ERR_CONFIRMED_PASS));

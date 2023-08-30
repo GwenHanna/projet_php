@@ -17,8 +17,8 @@ class Users_has_files
         VALUES (:userid, :fileid);';
         $r = $this->dbInstance->getConnect()->prepare($querry);
 
-        $r->bindParam(':userid', $idUser, PDO::PARAM_STR);
-        $r->bindParam(':fileid', $idFile);
+        $r->bindValue(':userid', $idUser, PDO::PARAM_STR);
+        $r->bindValue(':fileid', $idFile);
 
         //test verrification
         try {
