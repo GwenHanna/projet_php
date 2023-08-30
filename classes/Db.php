@@ -1,5 +1,6 @@
 <?php
 require_once './classes/Config.php';
+
 class Db
 {
     private static $instance = null;
@@ -30,10 +31,17 @@ class Db
      */
     public function getConnect(): PDO
     {
+        $settings = parse_ini_file('./db.ini');
+
         if ($this->conn == null) {
 
+            $host = $settings['HOST'];
+            $dbname = $settings['DB_NAME'];
+            $username = $settings['USER_NAME'];
+            $password = $settings['PASSWORD'];
+
             try {
-                $this->conn = new PDO("mysql:host=" . Config::HOST . ";dbname=" . Config::DB_NAME_APP, Config::USER_NAME, Config::PASSWORD);
+                $this->conn = new PDO("mysql:host=" . $host . ";dbname=" . $dbname, $username, $password);
                 $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (PDOException $exception) {
                 throw new Exception($exception->getMessage());

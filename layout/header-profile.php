@@ -11,7 +11,7 @@ if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
         <?php } ?>
     </div>
     <div class="picture-profile">
-        <?php if (isset($user)) { ?>
+        <?php if (isset($user['picture'])) { ?>
             <img class="picture" src="<?php echo $user['picture'] ?>" alt="<?php echo $user['firstname'] . ' ' . $user['lastname'] ?>">
         <?php } ?>
     </div>

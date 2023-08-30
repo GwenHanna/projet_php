@@ -3,14 +3,6 @@
 class Config
 {
 
-    //CONSTANTE INIT BDD
-    const HOST = "host.docker.internal";
-    const USER_NAME = "root";
-    const PASSWORD = "";
-    const DB_NAME_CITY = "france";
-    const DB_NAME_APP = "mycomunnitylib";
-
-
     //CONSTANTE ERROR
     public const ERR_CONNECT_EMAIL = 1;
     public const ERR_SPAM_EMAIL = 2;
