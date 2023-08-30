@@ -125,21 +125,19 @@ class User
      *
      * @return  string
      */
-    private function getPathFilePictureProfile(): string
+    private function getProfilePicturePath(): string
     {
         $querry = 'SELECT files.path_file FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = :userid';
 
 
         try {
             $r = $this->dbInstance->getConnect()->prepare($querry);
-            $r->bindParam(':userid', $this->id, PDO::PARAM_INT);
+            $r->bindValue(':userid', $this->id, PDO::PARAM_INT);
             $r->execute();
             $pathFile = $r->fetch(PDO::FETCH_ASSOC);
-            var_dump($pathFile);
             return $pathFile['path_file'];
         } catch (PDOException $e) {
             $errorMessageConnect =  $e->getMessage();
-            var_dump($errorMessageConnect);
         }
     }
 
@@ -223,7 +221,7 @@ class User
             $this->bio = $user['bio'];
 
             //Récupération du chemin de la photo de profile
-            $pathFilePictureProfile = $this->getPathFilePictureProfile();
+            $pathFilePictureProfile = $this->getProfilePicturePath();
             [
                 'id' => $this->id,
                 'firstname' => $this->firstname,

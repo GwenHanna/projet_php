@@ -44,7 +44,7 @@ class File
         $this->dbInstance = $dbInstance;
         $this->name = $name;
         $this->format = $format;
-        $this->pathfilePicture = $this->getPathFilePictureProfile();
+        $this->pathfilePicture = $this->getProfilePicturePath();
         $this->error = $error;
         $this->tmpname = $tmpname;
         $this->size = $size;
@@ -63,7 +63,7 @@ class File
      *
      * @return string
      */
-    private function getPathFilePictureProfile(): string
+    private function getProfilePicturePath(): string
     {
         return self::DIR_TARGET_PICTURE_PROFILE . basename($this->name);
     }
