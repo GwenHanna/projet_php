@@ -5,7 +5,7 @@ class ConnectionInvalidExeption extends Exception
 {
 }
 
-class DbVille
+class DbFrench
 {
 
     public $conn;
