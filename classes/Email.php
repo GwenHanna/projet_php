@@ -18,7 +18,6 @@ class Email
 
     private string $email;
     private Db $dbInstance;
-    private static Email|null $emailIstance = null;
 
     /**
      * Construction de l'instance Email
@@ -27,35 +26,22 @@ class Email
      * @param Db Instance de BDD
      * @throws EmailValidationException Vérification de l'email
      * @throws EmailSpamExeption Verification des spams
+     * @throws EmailAlreadyBdd
      */
     public function __construct(string $email, Db $dbIntance)
     {
+        $this->dbInstance = $dbIntance;
         if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new EmailValidationException(Errors::getCodes(Config::ERR_VALIDATION_EMAIL));
         } elseif ($this->isSpam($email) === true) {
             throw new EmailSpamExeption(Errors::getCodes(Config::ERR_SPAM_EMAIL));
+        } elseif ($this->isEmailBDD($email) === true) {
+            throw new EmailAlreadyBdd(Errors::getCodes(Config::ERR_ALREADY_EMAIL));
         } else {
             $this->email = $email;
-            $this->dbInstance = $dbIntance;
         }
     }
 
-    /**
-     * Undocumented function
-     *
-     * @param Email $emailIstance
-     * @param string $email
-     * @param Db $dbInstance
-     * @return Email
-     */
-    static function getInstance(string $email, Db $dbInstance): Email
-    {
-        if (self::$emailIstance === null) {
-            return new self($email, $dbInstance);
-        } else {
-            return self::$emailIstance;
-        }
-    }
 
     /******************************************* FONCTIONS ****************************************************************/
 
@@ -66,15 +52,10 @@ class Email
      * @param string $email
      * @return bool
      */
-    public function isEmailBDD(): bool
+    private function isEmailBDD($email): bool
     {
-        $users = $this->getEmailBDD();
-
-        if (in_array($this->email, $users)) {
-            return true;
-        } else {
-            return false;
-        }
+        $emails = $this->getEmailBDD();
+        return in_array($email, $emails);
     }
 
     private function isSpam(string $email): bool
@@ -100,10 +81,10 @@ class Email
      */
     private function getEmailAndPassword(): array
     {
-        $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.email = :userId';
+        $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.email = :userEmail';
 
         $r = $this->dbInstance->getConnect()->prepare($querry);
-        $r->bindParam(':userId', $this->email, PDO::PARAM_STR);
+        $r->bindParam(':userEmail', $this->email, PDO::PARAM_STR);
         var_dump($this->email);
         try {
             $r->execute();
@@ -131,9 +112,9 @@ class Email
         $r->execute();
 
         //Récupération de tout les Emails dans un array 1 dimmension
-        $users = array_column($r->fetchAll(), 'email');
+        $emails = $r->fetchAll(PDO::FETCH_ASSOC);
 
-        return $users;
+        return $emails;
     }
 
     /**

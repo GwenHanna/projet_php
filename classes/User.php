@@ -20,7 +20,6 @@ class User
     private $locality;
     private $bio;
     private Db $dbInstance;
-    private static $userInstance = null;
 
     /**
      * Undocumented function
@@ -30,14 +29,6 @@ class User
     public function __construct(Db $dbInstance)
     {
         $this->dbInstance = $dbInstance;
-    }
-
-    static function getInstance(Db $dbInstance): User
-    {
-        if (self::$userInstance == null) {
-            return new self($dbInstance);
-        }
-        return self::$userInstance;
     }
 
 
@@ -147,7 +138,7 @@ class User
     /**
      * Récupere le chemin de la photo de profile
      *
-     * @return array
+     * @return  string
      */
     private function getPathFilePictureProfile(): string
     {
@@ -160,7 +151,7 @@ class User
             $r->execute();
             $pathFile = $r->fetch(PDO::FETCH_ASSOC);
             var_dump($pathFile);
-            return $pathFile;
+            return $pathFile['path_file'];
         } catch (PDOException $e) {
             $errorMessageConnect =  $e->getMessage();
             var_dump($errorMessageConnect);

@@ -9,22 +9,27 @@ if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) &
 
     try {
 
-        $emailInstance = new Email($_POST['email'], $instance);
-        if ($emailInstance->isEmailBDD() === false) {
-            $getErrorMessage = Errors::getCodes(Config::ERR_NOT_SIGN_IN);
-        }
+        $emailInstance = new Email($email, $instance);
 
         //Vérification du mot de pass
         $newPass = new Password($pass);
         $emailInstance->isVerificationConnexion($pass);
 
+        $user = new User($instance);
         $user->connect($email, $pass);
-        Utils::redirect('connexion.php');
+        Utils::redirect('profile.php');
+    } catch (EmailAlreadyBdd $e) {
+        Utils::redirect('register.php?error=' . Config::ERR_ALREADY_EMAIL);
     } catch (EmailValidationException $e) {
         Utils::redirect('connexion.php?error=' . Config::ERR_VALIDATION_EMAIL);
+        exit;
     } catch (EmailSpamExeption $e) {
         Utils::redirect('connexion.php?error=' . Config::ERR_SPAM_EMAIL);
+        exit;
     } catch (PasswordInvalidExeption $e) {
         Utils::redirect('connexion.php?error=' . Config::ERR_VALIDATE_PASS);
+        exit;
     }
+} else {
+    Utils::redirect('connexion.php');
 }

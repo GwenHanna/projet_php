@@ -15,14 +15,9 @@ if (isset($_GET['error'])) {
     $getErrorMessage = Errors::getCodes($codeError);
     var_dump($codeError);
 }
-if (isset($errorMessMail)) {
-    var_dump($errorMessMail);
-}
-
 
 if (isset($_SESSION['user'])) {
-    $user = $_SESSION['user'];
-    var_dump($user);
+    Utils::redirect('profile.php');
 }
 
 

@@ -4,7 +4,6 @@
 
 <main>
     <h1>MyComunnityLib</h1>
-    <?php $_SESSION['pagination'] ?? var_dump($_SESSION['pagination']) ?>
 </main>
 
 <footer>

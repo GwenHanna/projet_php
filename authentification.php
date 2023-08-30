@@ -20,11 +20,8 @@ if (isset($_POST['submit-register'])) {
     try {
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
-        $newEmail = Email::getInstance($_POST['email'], $instance);
+        new Email($email, $instance);
 
-        if ($newEmail->isEmailBDD($_POST['email']) === true) {
-            Utils::redirect('singnin.php?error=' . Config::ERR_ALREADY_EMAIL);
-        }
         $email = $_POST['email'];
 
         //Vérification Password valid a la construction de l'instance
@@ -38,11 +35,12 @@ if (isset($_POST['submit-register'])) {
         $lastname = $_POST['lastname'];
         $firstname = $_POST['firstname'];
 
+        $user = new User($instance);
+
         $user->InsertCoordannat($firstname, $lastname, $email, $pass);
 
-        $lastIdUser = $db->lastInsertId();
+        $lastIdUser = $instance->getConnect()->lastInsertId();
 
-        $_SESSION['pagination'] = 2;
         //File Picture
 
         if (isset($_FILES['fileName']) && !empty($_FILES['fileName']) && $_FILES['fileName']['error'] === 0) {
@@ -55,26 +53,32 @@ if (isset($_POST['submit-register'])) {
 
             $picture = new File($instance, $name, $type, $error, $size, $tmp_name);
             $picture->InsertFileBDD();
+            $file = new Users_has_files($instance);
             $lastIdFile = (int)$file->getLastIdFile($instance)['MAX(id)'];
-            var_dump($lastIdFile);
 
             $file->InsertIdUserAndIdFile($lastIdUser, $lastIdFile);
         }
-        Utils::redirect('singnin.php?success=ok');
+        Utils::redirect('register.php?success=ok');
     } catch (EmailValidationException $e) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_VALIDATION_EMAIL);
+        Utils::redirect('register.php?error=' . Config::ERR_VALIDATION_EMAIL);
+        exit;
     } catch (EmailSpamExeption $s) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_SPAM_EMAIL);
+        Utils::redirect('register.php?error=' . Config::ERR_SPAM_EMAIL);
+        exit;
     } catch (EmailAlreadyBdd $b) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_ALREADY_EMAIL);
+        Utils::redirect('register.php?error=' . Config::ERR_ALREADY_EMAIL);
+        exit;
     } catch (PasswordInvalidExeption $p) {
         $errorMessagePassword = $p->getMessage();
     } catch (PasswordIsNotConfirmedExeption $c) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_CONFIRMED_PASS);
+        Utils::redirect('register.php?error=' . Config::ERR_CONFIRMED_PASS);
+        exit;
     } catch (EmailInvalidInsertionExeption $i) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_INSERT_USER);
+        Utils::redirect('register.php?error=' . Config::ERR_INSERT_USER);
+        exit;
     } catch (FormatInvalidExeption $f) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_FORMAT_PICTURE);
+        Utils::redirect('register.php?error=' . Config::ERR_FORMAT_PICTURE);
+        exit;
     };
 }
 
@@ -82,7 +86,7 @@ if (isset($_POST['register_submit_two'])) {
 
     try {
 
-
+        $user = new User($instance);
         //Modification de la date en string
         $formattedBirthday = date("Y-m-d", strtotime($_POST['birthday']));
 
@@ -96,7 +100,7 @@ if (isset($_POST['register_submit_two'])) {
         }
         Utils::redirect('connexion.php');
     } catch (FormatInvalidExeption $p) {
-        Utils::redirect('singnin.php?error=' . Config::ERR_FORMAT_PICTURE);
+        Utils::redirect('register.php?error=' . Config::ERR_FORMAT_PICTURE);
     } catch (PDOException $p) {
         $errorMessageConnect = $p->getMessage();
     } catch (EmailInvalidInsertionExeption $i) {

@@ -29,13 +29,11 @@ if ((isset($_GET['error']))) {
 }
 
 
-// if ((!isset($codeError)) && isset($_POST['submit-register'])) {
-//     $pagination = 2;
-// }
-
-// if (isset($_GET['success']) && !isset($codeError)) {
-//     $pagination = 2;
-// }
+if (isset($_GET['success']) && !isset($codeError)) {
+    $_SESSION['pagination'] = 2;
+} else {
+    $_SESSION['pagination'] = 1;
+}
 
 
 //Récupération des villes de france
@@ -45,7 +43,7 @@ $zipcodes = $newAddress->getZipcodes();
 
 ?>
 
-<?php if (!isset($_SESSION['pagination'])) { ?>
+<?php if ($_SESSION['pagination'] === 1) { ?>
 
     <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
         <fieldset class="">
@@ -105,7 +103,7 @@ $zipcodes = $newAddress->getZipcodes();
         </fieldset>
     </form>
 
-<?php } elseif (isset($_SESSION['pagination'])) { ?>
+<?php } elseif ($_SESSION['pagination'] === 2) { ?>
     <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php">
         <fieldset class="p-4">
             <legend>Complément d'informations </legend>

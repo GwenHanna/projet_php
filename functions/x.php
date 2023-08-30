@@ -17,8 +17,8 @@ try {
     foreach ($users as $user) {
         $hashedPassword = password_hash($user['passWord'], PASSWORD_DEFAULT);
         $updateStmt = $pdo->prepare('UPDATE users SET passWord = :hashedPassword WHERE id = :userId');
-        $updateStmt->bindValue(':hashedPassword', $hashedPassword);
-        $updateStmt->bindValue(':userId', $user['id']);
+        $updateStmt->bindParam(':hashedPassword', $hashedPassword);
+        $updateStmt->bindParam(':userId', $user['id']);
         $updateStmt->execute();
     }
 

@@ -4,25 +4,12 @@ require_once './init/init.php';
 class Users_has_files
 {
     private Db $dbInstance;
-    private static Users_has_files|null $fileInstance = null;
 
     public function __construct(Db $dbInstance)
     {
         $this->dbInstance = $dbInstance;
     }
 
-    /**
-     * Undocumented function
-     *
-     * @return Users_has_files
-     */
-    static function getInstance(Db $db): Users_has_files
-    {
-        if (self::$fileInstance === null) {
-            return new self($db);
-        }
-        return self::$fileInstance;
-    }
 
     public function InsertIdUserAndIdFile(int $idUser, int|null $idFile)
     {
@@ -42,7 +29,7 @@ class Users_has_files
         }
     }
 
-    static function getLastIdFile($db)
+    public function getLastIdFile($db)
     {
         $querry = 'SELECT MAX(id) FROM files';
 

@@ -35,7 +35,7 @@ $p =  './assets/';
             <?php
             if (empty($_SESSION['user'])) { ?>
                 <a href="connexion.php">Connexion</a>
-                <a href="singnin.php">Inscription</a>
+                <a href="register.php">Inscription</a>
             <?php } else { ?>
                 <a href="logout.php">Déconnexion</a>
             <?php }
