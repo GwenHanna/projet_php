@@ -43,7 +43,7 @@ if (isset($_SESSION['user'])) {
             <input class="form-control" type="text" name="pass" id="pass" placeholder="Mot de passe">
         </div>
 
-        <button class="btn" type="submit">Connexion</button>
+        <input type="submit" name="connect" id="" value="Connexion">
     </form>
 </fieldset>
 

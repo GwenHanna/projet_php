@@ -3,10 +3,10 @@ require_once './classes/Email.php';
 require_once './init/init.php';
 require_once './classes/Password.php';
 
-if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) && !empty($_POST['pass'])) {
+if (isset($_POST['connect'])) {
     $email = $_POST['email'];
     $pass = $_POST['pass'];
-
+    echo 'ok';
     try {
 
         $emailInstance = new Email($email, $instance);
@@ -30,6 +30,4 @@ if (isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) &
         Utils::redirect('connexion.php?error=' . Config::ERR_VALIDATE_PASS);
         exit;
     }
-} else {
-    Utils::redirect('connexion.php');
 }

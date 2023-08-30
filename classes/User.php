@@ -8,7 +8,7 @@ class EmailInvalidInsertionExeption extends Exception
 }
 class User
 {
-    private $id;
+    private int|null $id;
     private $firstname;
     private $lastname;
     private $pass;
@@ -58,7 +58,7 @@ class User
 
         try {
 
-            $lastIdUserBdd = $this->getLastIdBDD();
+            $lastIdUserBdd = $this->getLatestDbId();
 
             $query = 'UPDATE users
                 SET bio = :bio, newsletter = :newsletter, address = :address, locality = :locality, zipcode = :zipcode, birthday = :birthday
@@ -123,18 +123,18 @@ class User
     /**
      * Récupere le chemin de la photo de profile
      *
-     * @return  string
+     * 
      */
-    private function getProfilePicturePath(): string
+    private function getProfilePicturePath()
     {
-        $querry = 'SELECT files.path_file FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = :userid';
-
+        $querry = 'SELECT files.path_file FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = ?';
 
         try {
             $r = $this->dbInstance->getConnect()->prepare($querry);
-            $r->bindValue(':userid', $this->id, PDO::PARAM_INT);
+            $r->bindValue(1, $this->id, PDO::PARAM_INT);
             $r->execute();
-            $pathFile = $r->fetch(PDO::FETCH_ASSOC);
+            $pathFile = $r->fetch();
+            var_dump($pathFile);
             return $pathFile['path_file'];
         } catch (PDOException $e) {
             $errorMessageConnect =  $e->getMessage();
@@ -146,7 +146,7 @@ class User
      *
      * @return integer
      */
-    private function getLastIdBDD(): int
+    private function getLatestDbId(): int
     {
 
         $querry = 'SELECT MAX(id) FROM users';
@@ -156,7 +156,6 @@ class User
 
         if ($r->execute()) {
             $result = $r->fetch(PDO::FETCH_ASSOC);
-            var_dump($result);
             $lastId = (int)$result['MAX(id)'];
             return $lastId;
         } else {
@@ -179,8 +178,6 @@ class User
         return $user;
     }
 
-
-
     /**
      * Connection Utilisateur function
      *
@@ -194,7 +191,7 @@ class User
 
         $recipesStatment = $connexion->prepare('SELECT * FROM `users` WHERE `email` = :email');
 
-        $recipesStatment->bindParam(':email', $email, PDO::PARAM_STR);
+        $recipesStatment->bindValue(':email', $email, PDO::PARAM_STR);
         $recipesStatment->execute();
 
         $user = $recipesStatment->fetch();
@@ -222,7 +219,7 @@ class User
 
             //Récupération du chemin de la photo de profile
             $pathFilePictureProfile = $this->getProfilePicturePath();
-            [
+            $_SESSION['user'] = [
                 'id' => $this->id,
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
@@ -232,7 +229,7 @@ class User
                 'bio' => $this->bio,
                 'locality' => $this->locality,
                 'email' => $this->email
-            ] = $_SESSION['user'];
+            ];
             return $_SESSION['user'];
         }
     }

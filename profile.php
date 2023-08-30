@@ -11,7 +11,7 @@ require_once './classes/Db.php';
 require_once './classes/Utils.php';
 
 if (!isset($_SESSION['user'])) {
-    Utils::redirect('index.php');
+    Utils::redirect('connect.php');
 }
 var_dump($_SESSION['user']);
 ?>

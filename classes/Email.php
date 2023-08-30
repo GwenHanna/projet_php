@@ -85,11 +85,9 @@ class Email
 
         $r = $this->dbInstance->getConnect()->prepare($querry);
         $r->bindParam(':userEmail', $this->email, PDO::PARAM_STR);
-        var_dump($this->email);
         try {
             $r->execute();
             $res = $r->fetch(PDO::FETCH_ASSOC);
-            var_dump($res);
             return $res;
         } catch (PDOException  $e) {
             $error = $e->getMessage();
