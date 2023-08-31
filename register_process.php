@@ -11,7 +11,6 @@ require_once './classes/Utils.php';
 require_once './classes/Email.php';
 require_once './classes/Password.php';
 require_once './classes/User.php';
-require_once './classes/Db.php';
 require_once './classes/File.php';
 
 
@@ -89,12 +88,18 @@ if (isset($_POST['register_submit_two'])) {
         $formattedBirthday = date("Y-m-d", strtotime($_POST['birthday']));
 
         //Update de l'utilisateur a l'inscription sans newsletter
-        if (!isset($_POST['newsletter']) && isset($_POST['bio'])) {
-            $user->insertContactDetails($_POST['bio']);
-        } else {
+        if (isset($_POST['newsletter'])) {
             $newsletterOk = true;
-            //Update de l'utilisateur a l'inscription avec newsletter
-            $user->insertContactDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
+            [
+                'bio' => $bio,
+                'address' => $address,
+                'locality' => $locality,
+                'zipcode' => $zipcode,
+            ] = $_POST;
+            $user->insertContactDetails($address, $locality, $zipcode, $formattedBirthday, $newsletterOk);
+        } else {
+
+            $user->insertContactDetails('', '', '', '');
         }
         Utils::redirect('conection.php');
     } catch (FormatInvalidExeption $p) {

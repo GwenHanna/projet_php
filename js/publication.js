@@ -9,8 +9,9 @@ let formPublication = document.querySelector(".form-publication");
 let choicePicture = document.querySelector(".choice-picture");
 let choiceLink = document.querySelector(".choice-link");
 
-//Event//
+//***************Event***************************//
 
+//Toggle class pop up ajout publication
 addPublication.addEventListener("click", () => {
   document.querySelector("body").style.background = "black";
   formPublication.classList.remove("hidden");
@@ -21,8 +22,6 @@ addPublication.addEventListener("click", () => {
     formPublication.classList.add("hidden");
   });
 });
-
-//Toggle class form file
 picturePublication.addEventListener("click", (e) => {
   choiceLink.classList.remove("actived");
   choiceLink.classList.add("hidden");

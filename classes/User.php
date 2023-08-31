@@ -49,12 +49,12 @@ class User
      * @return void
      */
     public function insertContactDetails(
+        string $address,
+        string $locality,
+        string $zipcode,
+        $birthday,
         string $bio = null,
         bool $newsletter = false,
-        string $address = null,
-        string $locality = null,
-        string $zipcode = null,
-        $birthday = null
     ): void {
 
         try {
@@ -62,17 +62,17 @@ class User
             $lastIdUserBdd = $this->getLatestDbId();
 
             $query = 'UPDATE users
-                SET bio = :bio, newsletter = :newsletter, address = :address, locality = :locality, zipcode = :zipcode, birthday = :birthday
+                SET   address = :address, locality = :locality, zipcode = :zipcode, birthday = :birthday, bio = :bio,newsletter = :newsletter
                 WHERE id = :idUser';
 
             $r = $this->dbInstance->getConnect()->prepare($query);
 
-            $r->bindValue(':bio', $bio, PDO::PARAM_STR);
             $r->bindValue(':newsletter', $newsletter, PDO::PARAM_BOOL);
             $r->bindValue(':address', $address, PDO::PARAM_STR);
             $r->bindValue(':locality', $locality, PDO::PARAM_STR);
             $r->bindValue(':zipcode', $zipcode, PDO::PARAM_STR);
             $r->bindValue(':birthday', $birthday, PDO::PARAM_STR);
+            $r->bindValue(':bio', $bio, PDO::PARAM_STR);
             $r->bindValue(':idUser', $lastIdUserBdd, PDO::PARAM_INT);
 
             $r->execute();

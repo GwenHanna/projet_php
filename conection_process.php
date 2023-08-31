@@ -1,7 +1,7 @@
 <?php
 require_once './classes/Email.php';
-require_once './init/init.php';
 require_once './classes/Password.php';
+require_once './init/init.php';
 
 if (isset($_POST['connect'])) {
     $email = $_POST['email'];
@@ -12,7 +12,6 @@ if (isset($_POST['connect'])) {
         $newPass = new Password($pass);
 
         if ($emailInstance->isConfirmedConnection($pass) === true) {
-
             $user = new User($instance);
             //Connexion se l'utilisateur
             $user->connect($email, $pass);
