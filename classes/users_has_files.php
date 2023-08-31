@@ -13,9 +13,9 @@ class Users_has_files
 
     public function InsertIdUserAndIdFile(int $idUser, int|null $idFile)
     {
-        $querry = 'INSERT INTO users_has_files (Users_id, Files_id )
+        $query = 'INSERT INTO users_has_files (Users_id, Files_id )
         VALUES (:userid, :fileid);';
-        $r = $this->dbInstance->getConnect()->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($query);
 
         $r->bindValue(':userid', $idUser, PDO::PARAM_STR);
         $r->bindValue(':fileid', $idFile);
@@ -31,9 +31,9 @@ class Users_has_files
 
     public function getLastIdFile($db)
     {
-        $querry = 'SELECT MAX(id) FROM files';
+        $query = 'SELECT MAX(id) FROM files';
 
-        $r = $db->getConnect()->prepare($querry);
+        $r = $db->getConnect()->prepare($query);
         try {
             $r->execute();
             $res = $r->fetch();

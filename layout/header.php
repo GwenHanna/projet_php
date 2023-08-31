@@ -34,10 +34,10 @@ $p =  './assets/';
         <nav class="btn col-sm-2">
             <?php
             if (empty($_SESSION['user'])) { ?>
-                <a href="connexion.php">Connexion</a>
+                <a href="conection.php">Connexion</a>
                 <a href="register.php">Inscription</a>
             <?php } else { ?>
-                <a href="logout.php">Déconnexion</a>
+                <a href="logout.php">Déconection</a>
             <?php }
             ?>
 

@@ -35,10 +35,17 @@ class Db
 
         if ($this->conn == null) {
 
-            $host = $settings['HOST'];
-            $dbname = $settings['DB_NAME'];
-            $username = $settings['USER_NAME'];
-            $password = $settings['PASSWORD'];
+            // $host = $settings['HOST'];
+            // $dbname = $settings['DB_NAME'];
+            // $username = $settings['USER_NAME'];
+            // $password = $settings['PASSWORD'];
+
+            [
+                'HOST' => $host,
+                'DB_NAME' => $dbname,
+                'USER_NAME' => $username,
+                'PASSWORD' => $password,
+            ] = $settings;
 
             try {
                 $this->conn = new PDO("mysql:host=" . $host . ";dbname=" . $dbname, $username, $password);

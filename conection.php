@@ -13,7 +13,6 @@ $getErrorMessage = '';
 if (isset($_GET['error'])) {
     $codeError = intval($_GET['error']);
     $getErrorMessage = Errors::getCodes($codeError);
-    var_dump($codeError);
 }
 
 if (isset($_SESSION['user'])) {
@@ -30,7 +29,7 @@ if (isset($_SESSION['user'])) {
 <fieldset>
     <legend>Connexion</legend>
 
-    <form class="container" method="post" action="connect.php">
+    <form class="container" method="post" action=" conection_process.php">
 
         <div class="row mb-5">
             <input class="form-control" type="text" name="email" id="email" placeholder="ex : toto@gmail.fr">

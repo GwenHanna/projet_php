@@ -2,6 +2,7 @@
 require_once './init/init.php';
 require_once './classes/Config.php';
 require_once './classes/Utils.php';
+require_once './classes/File.php';
 
 class EmailInvalidInsertionExeption extends Exception
 {
@@ -125,13 +126,13 @@ class User
      *
      * 
      */
-    private function getProfilePicturePath()
+    public function getProfilePicturePath($id)
     {
-        $querry = 'SELECT files.path_file FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = ?';
+        $query = 'SELECT files.name FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = ?';
 
         try {
-            $r = $this->dbInstance->getConnect()->prepare($querry);
-            $r->bindValue(1, $this->id, PDO::PARAM_INT);
+            $r = $this->dbInstance->getConnect()->prepare($query);
+            $r->bindValue(1, $id, PDO::PARAM_INT);
             $r->execute();
             $pathFile = $r->fetch();
             var_dump($pathFile);
@@ -149,9 +150,9 @@ class User
     private function getLatestDbId(): int
     {
 
-        $querry = 'SELECT MAX(id) FROM users';
+        $query = 'SELECT MAX(id) FROM users';
 
-        $r = $this->dbInstance->getConnect()->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($query);
 
 
         if ($r->execute()) {
@@ -171,8 +172,8 @@ class User
      */
     public function getUser(): array
     {
-        $querry = 'SELECT * FROM `users` ';
-        $r = $this->dbInstance->getConnect()->prepare($querry);
+        $query = 'SELECT * FROM `users` ';
+        $r = $this->dbInstance->getConnect()->prepare($query);
         $r->execute();
         $user = $r->fetchAll();
         return $user;
@@ -198,14 +199,12 @@ class User
 
 
         if ($user === false) {
-            Utils::redirect('connexion.php?error=' . Config::ERR_CONNECT_EMAIL);
+            Utils::redirect('conection.php?error=' . Config::ERR_CONNECT_EMAIL);
         } else if (!password_verify($pass, $user['passWord'])) {
-            Utils::redirect('connexion.php?error=' . Config::ERR_CONNECT_PASS);
+            Utils::redirect('conection.php?error=' . Config::ERR_CONNECT_PASS);
         } else {
             session_start();
             echo "Vous êtes connecter";
-
-
 
             $this->id = $user['id'];
             $this->firstname = $user['firstname'];
@@ -218,7 +217,9 @@ class User
             $this->bio = $user['bio'];
 
             //Récupération du chemin de la photo de profile
-            $pathFilePictureProfile = $this->getProfilePicturePath();
+
+            $pathFilePictureProfile = $this->getProfilePicturePath($this->id);
+
             $_SESSION['user'] = [
                 'id' => $this->id,
                 'firstname' => $this->firstname,

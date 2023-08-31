@@ -59,7 +59,7 @@ class File
     /*********************************** FONCTIONS ************************************************ */
 
     /**
-     * Retourne le chemin du fichier pour les fichier
+     * Retourne le chemin du fichier
      *
      * @return string
      */
@@ -79,11 +79,11 @@ class File
      */
     public function InsertFileDb()
     {
-        $querry = 'INSERT INTO files (name, format, path_file, size, datecreated) 
+        $query = 'INSERT INTO files (name, format, path_file, size, datecreated) 
         VALUES (:name, :format, :path_file, :size, NOW())';
 
 
-        $r = $this->dbInstance->getConnect()->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($query);
 
         // var_dump($r);
         $r->bindValue(':name', $this->name, PDO::PARAM_STR);
@@ -105,17 +105,16 @@ class File
      * @throws  PDOExeption Si erreur de recuperation du chemin du fichier
      * @return string
      */
-    public function getFilePath(): string
+    static function getFilePath(int $userId, Db $dbInstance): string
     {
-        $querry = '';
+        $query = 'SELECT files.path_file FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id =:userId';
 
-        $r = $this->dbInstance->getConnect()->prepare($querry);
-
-        if ($r->execute()) {
-            return $r->fetch();
-        } else {
-            throw new PDOException('Impossible de récupérer le chemin du fichier !');
-        }
+        $r = $dbInstance->getConnect()->prepare($query);
+        $r->bindValue(':userId', $userId);
+        $r->execute();
+        $res = $r->fetch(PDO::FETCH_ASSOC);
+        $path = $res['path'];
+        return $path;
     }
 
 

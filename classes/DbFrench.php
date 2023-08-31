@@ -18,9 +18,16 @@ class DbFrench
      */
     public function getConnect(): PDO
     {
+        $settings = parse_ini_file('./db.ini');
+        [
+            'HOST' => $host,
+            'DB_NAME_CITY' => $dbname,
+            'USER_NAME' => $username,
+            'PASSWORD' => $password,
+        ] = $settings;
 
         try {
-            $this->conn = new PDO("mysql:host=" . Config::HOST . ";dbname=" . Config::DB_NAME_CITY, Config::USER_NAME, Config::PASSWORD);
+            $this->conn = new PDO("mysql:host=" . $host . ";dbname=" . $dbname, $username, $password);
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $exception) {
             throw new ConnectionInvalidExeption("Erreur de connexion : " . $exception->getMessage());

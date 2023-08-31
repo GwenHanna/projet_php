@@ -1,23 +1,33 @@
+//Boutton
 let addPublication = document.querySelector(".addPublication");
+let picturePublication = document.querySelector("#picture-publication");
+let linkPublication = document.querySelector("#link-publication");
+let close = document.querySelector(".close");
+
+//Boite
 let formPublication = document.querySelector(".form-publication");
-let choices = document.querySelectorAll(".choice");
+let choicePicture = document.querySelector(".choice-picture");
+let choiceLink = document.querySelector(".choice-link");
+
+//Event//
 
 addPublication.addEventListener("click", () => {
-  console.log(addPublication);
   formPublication.classList.remove("hidden");
   formPublication.classList.add("actived");
+  close.addEventListener("click", () => {
+    formPublication.classList.remove("actived");
+    formPublication.classList.add("hidden");
+  });
 });
 
 //Toggle class form file
-choices.forEach((choice) => {
-  choice.addEventListener("click", (e) => {
-    el = e.target.nextElementSibling;
-    if (el.classList.contains("actived")) {
-      el.classList.toggle("hidden");
-      el.classList.toggle("actived");
-    } else if (el.classList.contains("hidden")) {
-      el.classList.toggle("hidden");
-      el.classList.toggle("actived");
-    }
-  });
+picturePublication.addEventListener("click", (e) => {
+  choiceLink.classList.remove("actived");
+  choiceLink.classList.add("hidden");
+  choicePicture.classList.toggle("actived");
+});
+linkPublication.addEventListener("click", (e) => {
+  choicePicture.classList.remove("actived");
+  choicePicture.classList.add("hidden");
+  choiceLink.classList.toggle("actived");
 });

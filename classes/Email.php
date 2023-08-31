@@ -79,11 +79,11 @@ class Email
      *
      *@return  array
      */
-    private function getEmailAndPassword(): array
+    private function getEmailAndPassword(): array|bool
     {
-        $querry = 'SELECT `email`, `passWord` FROM `users` WHERE users.email = :userEmail';
+        $query = 'SELECT `email`, `passWord` FROM `users` WHERE users.email = :userEmail';
 
-        $r = $this->dbInstance->getConnect()->prepare($querry);
+        $r = $this->dbInstance->getConnect()->prepare($query);
         $r->bindValue(':userEmail', $this->email, PDO::PARAM_STR);
         try {
             $r->execute();
@@ -102,8 +102,8 @@ class Email
     private function getEmailsDb(): array
     {
 
-        $querry = 'SELECT email FROM users';
-        $r = $this->dbInstance->getConnect()->prepare($querry);
+        $query = 'SELECT email FROM users';
+        $r = $this->dbInstance->getConnect()->prepare($query);
         $r->execute();
 
         //Récupération de tout les Emails dans un array 1 dimmension

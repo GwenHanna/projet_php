@@ -98,7 +98,7 @@ if (isset($_POST['register_submit_two'])) {
             //Update de l'utilisateur a l'inscription avec newsletter
             $user->insertContactDetails($_POST['bio'], $newsletterOk, $_POST['address'], $_POST['locality'], $_POST['zipcode'], $formattedBirthday);
         }
-        Utils::redirect('connexion.php');
+        Utils::redirect('conection.php');
     } catch (FormatInvalidExeption $p) {
         Utils::redirect('register.php?error=' . Config::ERR_FORMAT_PICTURE);
     } catch (PDOException $p) {
@@ -116,7 +116,7 @@ if (isset($_POST['register_submit_two'])) {
     ?>
 </header>
 <h1>Téléchargement réussi</h1>
-<a href="connexion.php">Se connecter</a>
+<a href="conection.php">Se conection_processer</a>
 <footer>
     <?php require_once './layout/footer.php' ?>
 </footer>

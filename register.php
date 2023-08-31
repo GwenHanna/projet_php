@@ -12,7 +12,6 @@ if (isset($_SESSION['user'])) {
 
 //Verification des erreur URL
 if ((isset($_GET['error']))) {
-    // $pagination = 1;
 
     $codeError = intval($_GET['error']);
 
@@ -45,7 +44,7 @@ $zipcodes = $newAddress->getZipcodes();
 
 <?php if ($_SESSION['pagination'] === 1) { ?>
 
-    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php" enctype="multipart/form-data">
+    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="register_process.php" enctype="multipart/form-data">
         <fieldset class="">
             <legend>Coordonées</legend>
             <!-- NAME -->
@@ -104,7 +103,7 @@ $zipcodes = $newAddress->getZipcodes();
     </form>
 
 <?php } elseif ($_SESSION['pagination'] === 2) { ?>
-    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="authentification.php">
+    <form class="form-control d-flex flex-column justify-content-center mx-auto w-75" method="post" action="register_process.php">
         <fieldset class="p-4">
             <legend>Complément d'informations </legend>
 
