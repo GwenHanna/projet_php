@@ -12,9 +12,11 @@ let choiceLink = document.querySelector(".choice-link");
 //Event//
 
 addPublication.addEventListener("click", () => {
+  document.querySelector("body").style.background = "black";
   formPublication.classList.remove("hidden");
   formPublication.classList.add("actived");
   close.addEventListener("click", () => {
+    document.querySelector("body").style.background = "inherit";
     formPublication.classList.remove("actived");
     formPublication.classList.add("hidden");
   });

@@ -2,12 +2,16 @@
 if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
     $user = $_SESSION['user'];
 }
+if (isset($user['picture']['name'])) {
+    $namePicture = $user['picture']['name'];
+    $pathFile = '../uploads/picture_profile/';
+}
 
 ?>
 <div class="col-3 side-bar-profile">
     <div class="picture-profile">
         <?php if (isset($user['picture'])) { ?>
-            <img class="picture" src="<?php echo $user['picture'] ?>" alt="<?php echo $user['firstname'] . ' ' . $user['lastname'] ?>">
+            <img class="picture" src="<?php echo $pathFile . $namePicture ?>" alt="<?php echo $user['firstname'] . ' ' . $user['lastname'] ?>">
         <?php } ?>
     </div>
     <div class="side-bar-profile-item">
@@ -21,8 +25,8 @@ if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
     </div>
 
     <div class="card text-center form-publication hidden ">
-        <div class="card-header">
-            <p class="card-title">Ajouter une publication
+        <div class="">
+            <p class="title-header-form">Ajouter une publication
                 <span>
                     <svg class="close" width="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
@@ -36,10 +40,13 @@ if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
         <div class="card-body">
             <form class="form-control text-center" action="" method="post">
                 <div class="card-body">
+                    <div class="btns d-flex">
+                        <input value="Lien" type="button" name="" id="link-publication" class="col-9 mx-auto ">
+                        <input type="button" value="Photo" name="" id="picture-publication" class="col-9 mx-auto ">
+                    </div>
 
                     <!-- Photo -->
                     <div class="form-group">
-                        <input type="button" value="Photo" name="" id="picture-publication" class="col-9 mx-auto ">
                         <div class="choice-picture actived">
                             <label class="m-3 custom-file-upload" for="picture">Photo</label>
                             <input value="Photo" type="file" name="picturePublication" id="picture">
@@ -47,7 +54,6 @@ if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
                     </div>
                     <!-- Link -->
                     <div class="form-group ">
-                        <input value="Lien" type="button" name="" id="link-publication" class="col-9 mx-auto ">
 
                         <div class="choice-link hidden" id="">
                             <input type="url" name="linkPublication" id="Linkpublication" placeholder="url de votre lien" class="choice">
@@ -63,5 +69,25 @@ if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
         </div>
 
     </div>
+
+
+
+    <div class="modal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ajouter une publication</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Modal body text goes here.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
 
 </div>

@@ -1,17 +1,16 @@
 <?php require_once './layout/header.php'; ?>
 
 
+<h1 class="pb-5">MyComunnityLib</h1>
 <section id="index">
-    <?php if (isset($_SESSION['user'])) {
-        require_once './layout/side-bar-profile.php';
-    } ?>
     <main>
-        <h1>MyComunnityLib</h1>
+        <?php if (isset($_SESSION['user'])) {
+            require_once './layout/side-bar-profile.php';
+        } ?>
+        <?php require_once './layout/side-bar.php'; ?>
     </main>
-    <?php require_once './layout/side-bar.php'; ?>
 
 </section>
 
-<footer>
-    <?php require_once './layout/footer.php'; ?>
-</footer>
+
+<?php require_once './layout/footer.php'; ?>

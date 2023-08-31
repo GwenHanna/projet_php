@@ -15,15 +15,13 @@ require_once './classes/Db.php';
 require_once './classes/File.php';
 
 
-
 if (isset($_POST['submit-register'])) {
     try {
 
         //Vérification de la validation Email et vérif Spam a la construction de l'instance
         $email = $_POST['email'];
-        new Email($email, $instance);
-
-
+        $instanceEmail = new Email($email, $instance);
+        $instanceEmail->isEmailDb($email);
         //Vérification Password valid a la construction de l'instance
         $newPassword = new Password($_POST['password']);
         $pass = $_POST['password'];

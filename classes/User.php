@@ -126,20 +126,17 @@ class User
      *
      * 
      */
-    public function getProfilePicturePath($id)
+    private function getProfilePicturePath()
     {
-        $query = 'SELECT files.name FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = ?';
+        $query = 'SELECT files.name FROM `users_has_files` INNER JOIN files ON files.id = users_has_files.Files_id INNER JOIN users ON users.id = users_has_files.Users_id WHERE users.id = :userId';
 
-        try {
-            $r = $this->dbInstance->getConnect()->prepare($query);
-            $r->bindValue(1, $id, PDO::PARAM_INT);
-            $r->execute();
-            $pathFile = $r->fetch();
-            var_dump($pathFile);
-            return $pathFile['path_file'];
-        } catch (PDOException $e) {
-            $errorMessageConnect =  $e->getMessage();
-        }
+
+        $r = $this->dbInstance->getConnect()->prepare($query);
+        $r->bindValue(':userId', $this->id, PDO::PARAM_INT);
+        $r->execute();
+        $pathFile = $r->fetch(PDO::FETCH_ASSOC);
+        var_dump($pathFile);
+        return $pathFile;
     }
 
     /**
@@ -216,9 +213,14 @@ class User
             $this->locality = $user['locality'];
             $this->bio = $user['bio'];
 
+            try {
+                $pathFilePictureProfile = $this->getProfilePicturePath();
+            } catch (PDOException $e) {
+                $errorMessageConnect =  $e->getMessage();
+                var_dump($errorMessageConnect);
+                exit;
+            }
             //Récupération du chemin de la photo de profile
-
-            $pathFilePictureProfile = $this->getProfilePicturePath($this->id);
 
             $_SESSION['user'] = [
                 'id' => $this->id,

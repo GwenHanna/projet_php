@@ -35,11 +35,8 @@ class Email
             throw new EmailValidationException(Errors::getCodes(Config::ERR_VALIDATION_EMAIL));
         } elseif ($this->isSpam($email) === true) {
             throw new EmailSpamExeption(Errors::getCodes(Config::ERR_SPAM_EMAIL));
-        } elseif ($this->isEmailDb($email) === true) {
-            throw new EmailAlreadyBdd(Errors::getCodes(Config::ERR_ALREADY_EMAIL));
-        } else {
-            $this->email = $email;
         }
+        $this->email = $email;
     }
 
 
@@ -52,7 +49,7 @@ class Email
      * @param string $email
      * @return bool
      */
-    private function isEmailDb($email): bool
+    public function isEmailDb($email): bool
     {
         $emails = $this->getEmailsDb();
         return in_array($email, $emails);
@@ -107,8 +104,7 @@ class Email
         $r->execute();
 
         //Récupération de tout les Emails dans un array 1 dimmension
-        $emails = $r->fetchAll(PDO::FETCH_ASSOC);
-
+        $emails = $r->fetchAll(PDO::FETCH_COLUMN);
         return $emails;
     }
 

@@ -26,25 +26,30 @@ if (isset($_SESSION['user'])) {
     <?php require_once './layout/header.php' ?>
 </header>
 
-<fieldset>
-    <legend>Connexion</legend>
+<section>
+    <main>
+        <fieldset>
+            <legend>Connexion</legend>
 
-    <form class="container" method="post" action=" conection_process.php">
+            <form class="container" method="post" action=" conection_process.php">
 
-        <div class="row mb-5">
-            <input class="form-control" type="text" name="email" id="email" placeholder="ex : toto@gmail.fr">
-            <?php if (isset($getErrorMessage)) { ?>
-                <span class="danger"><?php echo $getErrorMessage ?></span>
-            <?php } ?>
-        </div>
+                <div class="">
+                    <label for="">Email</label>
+                    <input class="form-control" type="text" name="email" id="email" placeholder="ex : toto@gmail.fr">
+                    <?php if (isset($getErrorMessage)) { ?>
+                        <span class="danger"><?php echo $getErrorMessage ?></span>
+                    <?php } ?>
+                </div>
 
-        <div class="row mb-5">
-            <input class="form-control" type="text" name="pass" id="pass" placeholder="Mot de passe">
-        </div>
+                <div class="">
+                    <input class="form-control" type="text" name="pass" id="pass" placeholder="Mot de passe">
+                </div>
 
-        <input type="submit" name="connect" id="" value="Connexion">
-    </form>
-</fieldset>
+                <input type="submit" name="connect" id="" value="Connexion">
+            </form>
+        </fieldset>
+    </main>
+</section>
 
 <footer>
     <?php require_once './layout/footer.php' ?>

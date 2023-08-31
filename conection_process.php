@@ -11,16 +11,16 @@ if (isset($_POST['connect'])) {
         $emailInstance = new Email($email, $instance);
         $newPass = new Password($pass);
 
-        $emailInstance->isConfirmedConnection($pass);
+        if ($emailInstance->isConfirmedConnection($pass) === true) {
 
-        $user = new User($instance);
-
-        //Connexion se l'utilisateur
-        $user->connect($email, $pass);
+            $user = new User($instance);
+            //Connexion se l'utilisateur
+            $user->connect($email, $pass);
+        };
 
         Utils::redirect('profile.php');
     } catch (EmailAlreadyBdd $e) {
-        Utils::redirect('register.php?error=' . Config::ERR_ALREADY_EMAIL);
+        Utils::redirect('conection.php?error=' . Config::ERR_ALREADY_EMAIL);
     } catch (EmailValidationException $e) {
         Utils::redirect('conection.php?error=' . Config::ERR_VALIDATION_EMAIL);
         exit;
