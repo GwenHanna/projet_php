@@ -26,11 +26,6 @@ class File
      * Undocumented function
      *
      * @param  PDO $db
-     * @param string $name
-     * @param string $format
-     * @param string $error
-     * @param string $size
-     * 
      * @throws FormatInvalidExeption Vérifie le format pour une photo
      */
 
@@ -75,9 +70,9 @@ class File
     /**
      * Insertion des fichier dans la bdd
      *
-     * @return void
+     * @throws PDOException
      */
-    public function InsertFileDb()
+    public function InsertFileDb(): void
     {
         $query = 'INSERT INTO files (name, format, path_file, size, datecreated) 
         VALUES (:name, :format, :path_file, :size, NOW())';
@@ -92,11 +87,8 @@ class File
         $r->bindValue(':size', $this->size, PDO::PARAM_STR);
 
         //test verrification
-        try {
-            $r->execute();
-        } catch (PDOException $e) {
-            $errorMessagedb =  $e->getMessage();
-        }
+
+        $r->execute();
     }
 
     /**
@@ -126,7 +118,7 @@ class File
      * @param string $name
      * @return boolean
      */
-    public function isFormatPictureConfirmed(string $name): bool
+    private function isFormatPictureConfirmed(string $name): bool
     {
         $format = explode('.', $name);
         echo $format[1];

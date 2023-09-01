@@ -1,6 +1,7 @@
 <?php
-if (isset($errorMessageConnect)) {
+if (isset($errorMessageConnect) || isset($errorMessagePassword)) {
     var_dump($errorMessageConnect);
+    var_dump($errorMessagePassword);
 }
 
 //Init instance
@@ -66,7 +67,8 @@ if (isset($_POST['submit-register'])) {
         Utils::redirect('register.php?error=' . Config::ERR_ALREADY_EMAIL);
         exit;
     } catch (PasswordInvalidExeption $p) {
-        $errorMessagePassword = $p->getMessage();
+        Utils::redirect('register.php?error=' . Config::ERR_VALIDATE_PASS);
+        exit;
     } catch (PasswordIsNotConfirmedExeption $c) {
         Utils::redirect('register.php?error=' . Config::ERR_CONFIRMED_PASS);
         exit;
@@ -82,7 +84,7 @@ if (isset($_POST['submit-register'])) {
 if (isset($_POST['register_submit_two'])) {
 
     try {
-
+        var_dump($_POST);
         $user = new User($instance);
         //Modification de la date en string
         $formattedBirthday = date("Y-m-d", strtotime($_POST['birthday']));
@@ -94,7 +96,7 @@ if (isset($_POST['register_submit_two'])) {
                 'bio' => $bio,
                 'address' => $address,
                 'locality' => $locality,
-                'zipcode' => $zipcode,
+                'zipcodes' => $zipcode,
             ] = $_POST;
             $user->insertContactDetails($address, $locality, $zipcode, $formattedBirthday, $newsletterOk);
         } else {

@@ -2,7 +2,6 @@
 if (isset($_SESSION['user'])) {
     // var_dump($_SESSION['user']);
 }
-
 $p =  './assets/';
 // require_once __DIR__ . '../../assets/style.css';
 ?>
@@ -26,10 +25,15 @@ $p =  './assets/';
             MyCommunityLib
         </div>
         <nav class="d-flex justify-content-around col-sm-6">
+            <li><a href="index.php">Home</a></li>
             <?php if (isset($_SESSION['user'])) { ?>
                 <li><a href="profile.php">Mon Profile</a></li>
+                <?php if ($_SESSION['user']['role'] === 'modo' || $_SESSION['user']['role'] === 'admin') { ?>
+                    <li><a href="modo.php">Ma page de modération</a></li>
+                <?php } ?>
             <?php } ?>
-            <li><a href="index.php">Home</a></li>
+
+
         </nav>
         <nav class="btn col-sm-2">
             <?php

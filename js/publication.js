@@ -2,33 +2,47 @@
 let addPublication = document.querySelector(".addPublication");
 let picturePublication = document.querySelector("#picture-publication");
 let linkPublication = document.querySelector("#link-publication");
-let close = document.querySelector(".close");
+let close = document.querySelectorAll(".close");
 
 //Boite
+let = popSuccess = document.querySelector(".pop-success");
 let formPublication = document.querySelector(".form-publication");
 let choicePicture = document.querySelector(".choice-picture");
 let choiceLink = document.querySelector(".choice-link");
 
 //***************Event***************************//
+console.log(close);
 
+function activClass(el) {
+  el.classList.remove("hidden");
+  el.classList.add("actived");
+}
+function removeClass(el) {
+  el.classList.add("hidden");
+  el.classList.remove("actived");
+}
+
+close.forEach((clo) => {
+  clo.addEventListener("click", () => {
+    removeClass(popSuccess);
+  });
+});
 //Toggle class pop up ajout publication
 addPublication.addEventListener("click", () => {
   document.querySelector("body").style.background = "black";
-  formPublication.classList.remove("hidden");
-  formPublication.classList.add("actived");
-  close.addEventListener("click", () => {
-    document.querySelector("body").style.background = "inherit";
-    formPublication.classList.remove("actived");
-    formPublication.classList.add("hidden");
+  activClass(formPublication);
+  close.forEach((clo) => {
+    clo.addEventListener("click", () => {
+      document.querySelector("body").style.background = "inherit";
+      removeClass(formPublication);
+    });
   });
 });
 picturePublication.addEventListener("click", (e) => {
-  choiceLink.classList.remove("actived");
-  choiceLink.classList.add("hidden");
+  removeClass(choiceLink);
   choicePicture.classList.toggle("actived");
 });
 linkPublication.addEventListener("click", (e) => {
-  choicePicture.classList.remove("actived");
-  choicePicture.classList.add("hidden");
+  removeClass(choicePicture);
   choiceLink.classList.toggle("actived");
 });

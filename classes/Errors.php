@@ -22,6 +22,7 @@ class Errors
             Config::ERR_FORMAT_PICTURE => "Le format accepter sont '.jpg', '.jpeg', 'png'",
             Config::ERR_INSERT_USER => "Echec d'enregistrement !",
             Config::ERR_NOT_SIGN_IN => "Vous devez vous inscrire",
+            Config::ERR_DOUBLE_FILE => "Un seule type de publication",
             Config::SUCC_INSERT_USER => "Succès",
             default => "Autre Erreur"
         };

@@ -36,7 +36,7 @@ section{
     top: 150px;
 }
 .hidden{
-    display: none;
+    display: none !important;
 }
 .actived{
     display: inherit;
@@ -86,6 +86,10 @@ input[type="file"] {
 }
 
 /* SIDE BAR */
+
+.pop-success{
+    display: flex;
+}
 
 .side-bar-profile{
     /* background: red; */

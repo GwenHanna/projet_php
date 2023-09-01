@@ -3,6 +3,9 @@
 class Config
 {
 
+    //CONSTANTE DE DIR
+    public  const DIR_FILE_PICTURE = './uploads/picture_profile/';
+
     //CONSTANTE ERROR
     public const ERR_CONNECT_EMAIL = 1;
     public const ERR_SPAM_EMAIL = 2;
@@ -18,9 +21,12 @@ class Config
     public const ERR_INSERT_USER = 102;
     public const ERR_NOT_SIGN_IN = 103;
 
+    public const ERR_DOUBLE_FILE = 151;
+
 
     //CONSTANTE SUCCESS
-    public const SUCC_INSERT_USER = 100;
+    public const SUCC_INSERT_USER = 200;
+    public const SUCC_INSERT_PUBLICATION = 201;
 
     //Constante spam
     const SPAM_DOMAIN = [

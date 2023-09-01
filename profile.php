@@ -11,7 +11,6 @@ require_once './classes/Utils.php';
 if (!isset($_SESSION['user'])) {
     Utils::redirect(' conection_process.php');
 }
-
 ?>
 
 <section class="">

@@ -20,6 +20,7 @@ class User
     private $birthday;
     private $locality;
     private $bio;
+    private $role;
     private Db $dbInstance;
 
     /**
@@ -212,6 +213,7 @@ class User
             $this->birthday = $user['birthday'];
             $this->locality = $user['locality'];
             $this->bio = $user['bio'];
+            $this->role = $user['role'];
 
             try {
                 $pathFilePictureProfile = $this->getProfilePicturePath();
@@ -231,7 +233,8 @@ class User
                 'birthday' => $this->birthday,
                 'bio' => $this->bio,
                 'locality' => $this->locality,
-                'email' => $this->email
+                'email' => $this->email,
+                'role' => $this->role
             ];
             return $_SESSION['user'];
         }
