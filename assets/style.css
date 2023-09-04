@@ -12,7 +12,7 @@ li{
 }
 header{
     position: fixed;
-    background: white;
+    /* background: white; */
     z-index: 100000;
 }
 p{
@@ -36,7 +36,7 @@ section{
     top: 150px;
 }
 .hidden{
-    display: none !important;
+    display: none ;
 }
 .actived{
     display: inherit;

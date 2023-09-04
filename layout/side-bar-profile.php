@@ -50,7 +50,7 @@ if (isset($user['picture']['name'])) {
         </div>
 
         <div class="card-body">
-            <form class="form-control text-center" action="approuval_publication.php" method="post" enctype="multipart/form-data">
+            <form class="form-control text-center" action="register_publication.php" method="post" enctype="multipart/form-data">
                 <div class="card-body">
                     <div class="btns d-flex">
                         <input value="Lien" type="button" name="" id="link-publication" class="col-9 mx-auto ">

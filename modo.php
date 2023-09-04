@@ -18,12 +18,19 @@ if ($_SESSION['user']['role'] !== 'modo' || $_SESSION['user']['role'] !== 'admin
         var_dump($errorMessageConnect);
         exit;
     }
-} ?>
+}
+
+
+
+?>
 <section>
     <main>
-        <?php foreach ($publications as $p) {
-            require './assets/templates/post.php';
-        } ?>
+        <form action="approuvalPublication.php" method="post">
+            <?php foreach ($publications as $p) {
+                require './assets/templates/post.php';
+            } ?>
+            <input type="submit" value="Enregistrer">
+        </form>
     </main>
 </section>
 
