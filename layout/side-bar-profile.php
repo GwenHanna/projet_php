@@ -1,11 +1,22 @@
 <?php
+require_once './init/init.php';
 require_once './classes/Success.php';
+require_once './classes/Category.php';
+
+
 if (isset($_SESSION['user']) && !empty($_SESSION['user'])) {
     $user = $_SESSION['user'];
 }
+
 if (isset($user['picture']['name'])) {
     $namePicture = $user['picture']['name'];
     $pathFile = '../uploads/picture_profile/';
+}
+try {
+    $InstanceCategorie = new Category();
+    $categories = $InstanceCategorie->getCategoriesDb($instance);
+} catch (PDOException $th) {
+    //throw $th;
 }
 
 ?>
@@ -39,8 +50,8 @@ if (isset($user['picture']['name'])) {
     <div class="card text-center form-publication hidden ">
         <div class="">
             <p class="title-header-form">Ajouter une publication
-                <span>
-                    <svg class="close" width="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <span class="close">
+                    <svg width="30px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
                     </svg>
                 </span>
@@ -50,6 +61,8 @@ if (isset($user['picture']['name'])) {
         </div>
 
         <div class="card-body">
+
+            <!-- Formulaire d'ajout de publication -->
             <form class="form-control text-center" action="register_publication.php" method="post" enctype="multipart/form-data">
                 <div class="card-body">
                     <div class="btns d-flex">
@@ -72,6 +85,16 @@ if (isset($user['picture']['name'])) {
 
                         </div>
                     </div>
+
+                    <select name="category" id="">
+                        <?php foreach ($categories as $c) {
+                            [
+                                'id' => $idCategory,
+                                'name' => $nameCategory
+                            ] = $c; ?>
+                            <option value="<?php echo $idCategory ?>"><?php echo $nameCategory ?></option>
+                        <?php } ?>
+                    </select>
                 </div>
                 <div class="p-2">
                     <textarea class="col-sm-12" name="legend-file" id="legend-file" cols="30" rows="3" placeholder="Legende..."></textarea>
@@ -84,3 +107,4 @@ if (isset($user['picture']['name'])) {
 
 
 </div>
+<script src="./js/publication.js"></script>

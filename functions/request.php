@@ -1,6 +1,6 @@
 <?php
 require_once './init/init.php';
-function insertApprouvalPublication(Db $db): void
+function get(Db $db): void
 {
     $query = '';
 

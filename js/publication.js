@@ -1,5 +1,5 @@
 //Boutton
-let addPublication = document.querySelector(".addPublication");
+let addPublication = document.querySelectorAll(".addPublication");
 let picturePublication = document.querySelector("#picture-publication");
 let linkPublication = document.querySelector("#link-publication");
 let close = document.querySelectorAll(".close");
@@ -11,7 +11,6 @@ let choicePicture = document.querySelector(".choice-picture");
 let choiceLink = document.querySelector(".choice-link");
 
 //***************Event***************************//
-console.log(close);
 
 function activClass(el) {
   el.classList.remove("hidden");
@@ -24,20 +23,25 @@ function removeClass(el) {
 
 close.forEach((clo) => {
   clo.addEventListener("click", () => {
+    console.log(clo);
     removeClass(popSuccess);
   });
 });
 //Toggle class pop up ajout publication
-addPublication.addEventListener("click", () => {
-  document.querySelector("body").style.background = "black";
-  activClass(formPublication);
-  close.forEach((clo) => {
-    clo.addEventListener("click", () => {
-      document.querySelector("body").style.background = "inherit";
-      removeClass(formPublication);
+addPublication.forEach((p) => {
+  p.addEventListener("click", (e) => {
+    console.log(p);
+    document.querySelector("body").style.background = "black";
+    activClass(formPublication);
+    close.forEach((clo) => {
+      clo.addEventListener("click", () => {
+        document.querySelector("body").style.background = "inherit";
+        removeClass(formPublication);
+      });
     });
   });
 });
+
 picturePublication.addEventListener("click", (e) => {
   removeClass(choiceLink);
   choicePicture.classList.toggle("actived");

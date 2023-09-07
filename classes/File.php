@@ -120,9 +120,9 @@ class File
      */
     private function isFormatPictureConfirmed(string $name): bool
     {
-        $format = explode('.', $name);
-        echo $format[1];
-        return in_array($format[1], Config::FORMAT_PICTURE);
+        $res = explode('.', $name);
+        $format = strtolower($res[1]);
+        return in_array($format, Config::FORMAT_PICTURE);
     }
 
 

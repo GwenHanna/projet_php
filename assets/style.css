@@ -15,6 +15,10 @@ header{
     /* background: white; */
     z-index: 100000;
 }
+footer{
+    background: red;
+    height: 150px;
+}
 p{
     padding: 0;
     margin: 7px; 
@@ -34,6 +38,8 @@ section{
     width: 100vw;
     position: relative;
     top: 150px;
+    margin-bottom: 250px;
+    min-height: 45vh;
 }
 .hidden{
     display: none ;
@@ -87,9 +93,7 @@ input[type="file"] {
 
 /* SIDE BAR */
 
-.pop-success{
-    display: flex;
-}
+
 
 .side-bar-profile{
     /* background: red; */
@@ -100,6 +104,7 @@ input[type="file"] {
     left: 0;
     top: 150px;
     text-align: center;
+    z-index: 15555;
 }
 
 .side-bar-categories{
@@ -139,4 +144,19 @@ input[type="file"] {
 .side-bar-profile-item .side-bar-profile-name{
     font-size: 0.75rem;
     color: var(--color-title-name);
+}
+
+/* MODO */
+
+.btn-delete-publication{
+
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 8px;
+}
+.form-modo{
+    min-height: 30vh;
+    position: relative;
 }

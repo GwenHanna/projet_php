@@ -9,6 +9,11 @@ if (isset($_POST['connect'])) {
     try {
 
         $emailInstance = new Email($email, $instance);
+        $isEmailInDb = $emailInstance->isEmailDb($email);
+        if ($isEmailInDb  === false) {
+            Utils::redirect('conection.php?error=' . Config::ERR_CONNECT_EMAIL);
+            exit;
+        }
         $newPass = new Password($pass);
 
         if ($emailInstance->isConfirmedConnection($pass) === true) {
@@ -19,7 +24,9 @@ if (isset($_POST['connect'])) {
 
         Utils::redirect('profile.php');
     } catch (EmailAlreadyBdd $e) {
+        echo 'ok';
         Utils::redirect('conection.php?error=' . Config::ERR_ALREADY_EMAIL);
+        exit;
     } catch (EmailValidationException $e) {
         Utils::redirect('conection.php?error=' . Config::ERR_VALIDATION_EMAIL);
         exit;

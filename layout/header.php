@@ -41,7 +41,7 @@ $p =  './assets/';
                 <a href="conection.php">Connexion</a>
                 <a href="register.php">Inscription</a>
             <?php } else { ?>
-                <a href="logout.php">Déconection</a>
+                <a href="logout.php">Déconnexion</a>
             <?php }
             ?>
 

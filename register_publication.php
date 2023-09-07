@@ -64,8 +64,18 @@ if ($_FILES['picturePublication']['error'] == UPLOAD_ERR_OK  && !empty($_POST['l
 }
 
 try {
+    //Instance de publication
     $instancePost = new Publication($instance, $media);
-    $instancePost->insertPublicationApprouval($_SESSION['user']['id']);
+
+    //Inssertion das publication
+    $instancePost->insertPublication($_SESSION['user']['id']);
+
+    //Jointure des publication et des catégories
+    $lastId = intval($instance->getConnect()->lastInsertId());
+    $idCategory = intval($_POST['category']);
+    $instancePost->joinCategoryPublication($instance, $lastId, $idCategory);
+
+    //Redirection
     Utils::redirect('profile.php?success=' . Config::SUCC_INSERT_PUBLICATION);
 } catch (PDOException $p) {
     $errorMessageConnect = $p->getMessage();

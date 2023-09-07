@@ -12,7 +12,7 @@ if ($_SESSION['user']['role'] !== 'modo' || $_SESSION['user']['role'] !== 'admin
     }
 
     try {
-        $publications =  Publication::getPublicationsApprouval($instance);
+        $publications =  Publication::getPublications($instance);
     } catch (PDOException $th) {
         $errorMessageConnect = $th->getMessage();
         var_dump($errorMessageConnect);
@@ -20,16 +20,22 @@ if ($_SESSION['user']['role'] !== 'modo' || $_SESSION['user']['role'] !== 'admin
     }
 }
 
-
-
 ?>
 <section>
     <main>
-        <form action="approuvalPublication.php" method="post">
+        <form class="form-modo" action="approuvalPublication.php" method="post">
             <?php foreach ($publications as $p) {
-                require './assets/templates/post.php';
+                if ($p['approval_status'] === 0) { ?>
+                    <span>
+                        <?php
+                        $check = ($p['approval_status'] == 1) ? "checked" : "";
+                        ?>
+                        <input type="checkbox" name="media_<?php echo $p['id'] ?>" id="<?php echo $p['id'] ?>" <?php $check; ?> />
+                    </span>
+            <?php require './assets/templates/post.php';
+                }
             } ?>
-            <input type="submit" value="Enregistrer">
+            <input class="btn-delete-publication" type="submit" value="Supprimer">
         </form>
     </main>
 </section>

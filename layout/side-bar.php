@@ -16,6 +16,6 @@ $categories = $categorieInstance->getCategoriesDb($instance);
 
 <nav class="col-3 side-bar-categories">
     <?php foreach ($categories as $cat) { ?>
-        <li><a href="<?php echo $cat['path'] ?>?id=<?php echo $cat['id'] ?>"><?php echo $cat['name'] ?></a></li>
+        <li><a href="articles.php?id=<?php echo $cat['id'] ?>"><?php echo $cat['name'] ?></a></li>
     <?php } ?>
 </nav>
