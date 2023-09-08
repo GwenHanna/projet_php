@@ -4,10 +4,11 @@ require_once './layout/header.php';
 require_once './classes/Publication.php';
 require_once './classes/Category.php';
 
-$messageNotArticles = '';
 
 if (isset($_GET)) {
+    $messageNotArticles = '';
     $idMaxCategory = Category::getMaxIdCategory($instance);
+    var_dump($idMaxCategory);
     if ($_GET['id'] > $idMaxCategory) {
         $messageNotArticles = 'Not Found';
     }
@@ -17,15 +18,16 @@ if (isset($_GET)) {
 
     try {
         $articles = Publication::getArticles($instance, intval($idCategory));
+        if (count($articles) < 1) {
+            $messageNotArticles = "Aucun article trouvé dans cette catégorie";
+        }
     } catch (PDOException $th) {
-        var_dump($th->getMessage());
         exit;
     }
-} else {
-    $messageNotArticles = "Aucun article trouvé dans cette catégorie";
 }
-?>
-
+if (isset($_SESSION['user'])) {
+    require_once './layout/side-bar-profile.php';
+} ?>
 <section>
     <main>
         <?php if ($messageNotArticles !== '') { ?>
@@ -48,5 +50,6 @@ if (isset($_GET)) {
 </section>
 
 <?php
+require_once './layout/side-bar.php';
 require_once './layout/footer.php';
 ?>

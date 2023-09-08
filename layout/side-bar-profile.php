@@ -107,4 +107,3 @@ try {
 
 
 </div>
-<script src="./js/publication.js"></script>

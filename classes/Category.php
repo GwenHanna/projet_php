@@ -31,7 +31,7 @@ class Category
 
         $r = $dbInstance->getConnect()->prepare($query);
         $r->execute();
-        $idMax = $r->fetch();
+        $idMax = $r->fetch(PDO::FETCH_COLUMN);
         return intval($idMax);
     }
 }
