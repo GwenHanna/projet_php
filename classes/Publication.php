@@ -88,6 +88,20 @@ class Publication
      *
      * @throws PDOExeption
      */
+    static function getPublicationsOnHol(Db $db): array
+    {
+        $query = 'SELECT * FROM publications WHERE publications.approval_status = 0';
+        $r = $db->getConnect()->prepare($query);
+        $r->execute();
+        $publications = $r->fetchAll(PDO::FETCH_ASSOC);
+        return $publications;
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @throws PDOExeption
+     */
     static function getPublications(Db $db): array
     {
         $query = 'SELECT * FROM publications';

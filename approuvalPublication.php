@@ -7,7 +7,7 @@ require_once './classes/Config.php';
 if (isset($_SESSION['user'])) {
     Utils::redirect('profile.php');
 }
-$instancePublication = Publication::getPublications($instance);
+$instancePublication = Publication::getPublicationsOnHol($instance);
 
 foreach ($_POST as $k => $val) {
     $idCheck = explode('_', $k);
