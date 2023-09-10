@@ -1,12 +1,13 @@
 <?php
 require_once './classes/Comment.php';
 require_once './init/init.php';
+require_once './functions/request.php';
 
 if (isset($p)) {
     [
-        'id' => $idPpublication,
-        'media' => $media,
-        'approval_status' => $approvalStatus
+        'id'                => $idPpublication,
+        'media'             => $media,
+        'approval_status'   => $approvalStatus
     ] = $p;
 }
 $comments = Comment::getCommentArticle($instance, $idPpublication);
@@ -15,7 +16,6 @@ $comments = Comment::getCommentArticle($instance, $idPpublication);
 <div class="card-post">
     <div class="card-header">
         <h3 class="card-title"><?php  ?></h3>
-
     </div>
 
     <div class="card-body">
@@ -32,14 +32,18 @@ $comments = Comment::getCommentArticle($instance, $idPpublication);
             <input class="register-comments" type="submit" name="register_comments" id="" value="Publier">
         </form>
 
-        <?php foreach ($comments as $c) {
-            if ($idPpublication === $c['Publications_id']) { ?>
+        <?php
+        foreach ($comments as $c) {
+            if ($idPpublication === $c['Publications_id']) {
+                $autor = getUserById($c['Users_id'], $instance);
+        ?>
                 <div>
-                    <h6><?php echo $c['Users_id'] ?></h6>
+                    <h6><?php echo $autor ?></h6>
                     <p><?php echo $c['content'] ?></p>
                 </div>
         <?php }
         } ?>
-    <?php } ?>
-
 </div>
+<?php }
+
+?>
