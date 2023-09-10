@@ -1,26 +1,58 @@
 <?php
+require_once './classes/Config.php';
+
 class Db
 {
-    private $host = "host.docker.internal";
-    private $userName = "root";
-    private $passWord = "";
-    private $dbName = "MyComunnityLib";
-    public $conn;
+    private static $instance = null;
+    private $conn = null;
+
+    private function __construct()
+    {
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return Db
+     */
+    public static function getInstance(): Db
+    {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
 
     /**
      * Connect BDD function
      *
-     * @throws PDOException
-     * @return void
+     * @return  PDO
+     * @throws Exception
      */
-    public function getConnect()
+    public function getConnect(): PDO
     {
+        $settings = parse_ini_file('./db.ini');
 
-        try {
-            $this->conn = new PDO("mysql:host=" . $this->host . ";dbname=" . $this->dbName, $this->userName, $this->passWord);
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (PDOException $exception) {
-            echo "Erreur de connexion : " . $exception->getMessage();
+        if ($this->conn == null) {
+
+            // $host = $settings['HOST'];
+            // $dbname = $settings['DB_NAME'];
+            // $username = $settings['USER_NAME'];
+            // $password = $settings['PASSWORD'];
+
+            [
+                'HOST' => $host,
+                'DB_NAME' => $dbname,
+                'USER_NAME' => $username,
+                'PASSWORD' => $password,
+            ] = $settings;
+
+            try {
+                $this->conn = new PDO("mysql:host=" . $host . ";dbname=" . $dbname, $username, $password);
+                $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch (PDOException $exception) {
+                throw new Exception($exception->getMessage());
+            }
         }
 
         return $this->conn;
